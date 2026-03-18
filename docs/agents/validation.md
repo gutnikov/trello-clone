@@ -11,7 +11,7 @@
 7. **Unit tests (backend):** `cd backend && uv run python -m pytest tests/ -v`
 8. **Unit tests (frontend):** `cd frontend && pnpm vitest run`
 9. **Pre-commit hooks:** `cd backend && uv run pre-commit install` (install), `cd backend && uv run pre-commit run --all-files` (run all)
-10. **E2E tests:** `./e2e/smoke.sh [BASE_URL]` (uses agent-browser)
+10. **E2E tests:** `cd frontend && pnpm e2e` (Playwright, or `BASE_URL=... pnpm e2e` against staging)
 
 ### CI
 - **Platform:** GitHub Actions on self-hosted runners
@@ -30,7 +30,7 @@
 - **Cleanup workflow:** `.github/workflows/cleanup-staging.yml`
 - **Docker Compose:** `docker-compose.staging.yml`
 - **Logs:** `docker compose -p preview-pr-{N} logs`
-- **E2E against staging:** `./e2e/smoke.sh http://2.56.122.47:400N` (runs automatically after deploy)
+- **E2E against staging:** `cd frontend && BASE_URL=http://2.56.122.47:400N pnpm e2e` (runs automatically after deploy)
 
 ### Production Deployment
 - **Host:** `deploy@2.56.122.47`

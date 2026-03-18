@@ -16,10 +16,13 @@ WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
+# Copy full build context (vite preview needs config + dist + node_modules)
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/node_modules /app/node_modules
+COPY --from=builder /app/vite.config.ts /app/
+COPY --from=builder /app/tsconfig.json /app/
 
 EXPOSE 3000
 
-CMD ["node", "dist/server/server.js"]
+CMD ["pnpm", "preview", "--port", "3000", "--host", "0.0.0.0"]

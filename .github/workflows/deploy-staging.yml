@@ -12,6 +12,7 @@ env:
   STAGING_HOST: 2.56.122.47
   STAGING_USER: deploy
   STAGING_DIR: /home/deploy/staging
+  PNPM_HOME: /home/deploy/.local/share/pnpm
 
 jobs:
   deploy:
@@ -115,19 +116,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install agent-browser (if missing)
+      - name: Setup tooling
         run: |
-          which agent-browser || npm install -g agent-browser
-          agent-browser install 2>/dev/null || true
+          export PATH="$HOME/.local/bin:$PNPM_HOME:$PATH"
+          which pnpm || npm install -g --prefix "$HOME/.local" pnpm@10
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          echo "$PNPM_HOME" >> "$GITHUB_PATH"
 
-      - name: Run E2E smoke tests
+      - name: Install dependencies
+        run: cd frontend && pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: cd frontend && pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests against preview
         env:
           BASE_URL: ${{ needs.deploy.outputs.preview-url }}
-          API_URL: http://${{ env.STAGING_HOST }}:${{ needs.deploy.outputs.backend-port }}
-        run: |
-          chmod +x ./e2e/smoke.sh
-          ./e2e/smoke.sh "$BASE_URL"
-
-      - name: Close browser
-        if: always()
-        run: agent-browser close 2>/dev/null || true
+          CI: "true"
+        run: cd frontend && pnpm e2e
