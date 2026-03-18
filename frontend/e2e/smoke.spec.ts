@@ -1,23 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-test("homepage loads and shows Hello World", async ({ page }) => {
+test("homepage loads and shows heading", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /hello world/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /organize your work/i })).toBeVisible();
 });
 
-test("homepage button triggers alert with 42", async ({ page }) => {
+test("homepage shows feature cards", async ({ page }) => {
   await page.goto("/");
-
-  // Register a dialog handler that auto-accepts before clicking.
-  // alert() blocks JS execution, so the click won't resolve until the dialog is dismissed.
-  let dialogMessage = "";
-  page.on("dialog", async (dialog) => {
-    dialogMessage = dialog.message();
-    await dialog.accept();
-  });
-
-  await page.getByRole("button", { name: /the answer/i }).click();
-  expect(dialogMessage).toBe("42");
+  await expect(page.getByText("Kanban Boards")).toBeVisible();
+  await expect(page.getByText("Real-time Updates")).toBeVisible();
 });
 
 test("navigation to about page works", async ({ page }) => {
