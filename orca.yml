@@ -2,7 +2,7 @@ orca_version: 0.1.0
 tracker:
   kind: linear
   api_key: $LINEAR_API_KEY
-  project_slug: CHANGE_ME
+  project_slug: TRE
   active_states: Scoping, Planning, Design Feedback Loop, Implementing, Validating,
     Docs, Review
   terminal_states: Done, Closed, Cancelled
