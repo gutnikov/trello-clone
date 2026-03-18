@@ -63,9 +63,8 @@ All workflows follow these rules:
 3. **Verify concretely** — the tool must actually run successfully. Not "config looks valid" but "ran the tool and it exited 0." If verification fails, report the error.
 4. **Update docs after verify** — every workflow that affects agent behavior must update the relevant `docs/agents/*.md` files. Never skip doc updates.
 5. **Check DoD last** — after Docs Update, verify all Definition of Done items pass. If any fail, the workflow is not complete.
-6. **Commit after each workflow** — after DoD passes, `git add` all changed files and commit with message `chore: orca-setup <workflow-name>`. This prevents later workflows from losing earlier work via git operations.
-7. **Be interactive** — ask the user when there are meaningful choices. Don't assume defaults without presenting them.
-8. **Be idempotent** — re-running a workflow on an already-configured project should detect existing state and either skip or offer to update/reconfigure.
+6. **Be interactive** — ask the user when there are meaningful choices. Don't assume defaults without presenting them.
+7. **Be idempotent** — re-running a workflow on an already-configured project should detect existing state and either skip or offer to update/reconfigure.
 
 ## Workflow File Format
 

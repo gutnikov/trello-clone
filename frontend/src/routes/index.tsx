@@ -1,73 +1,124 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ArrowRight, Kanban, Layers, Users, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({ component: Home });
 
-function App() {
+function Home() {
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
-      <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-        <p className="island-kicker mb-3">TanStack Start Base Template</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-[var(--sea-ink)] sm:text-6xl">
-          Start simple, ship quickly.
-        </h1>
-        <p className="mb-8 max-w-2xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
-          This base starter intentionally keeps things light: two routes, clean structure, and the
-          essentials you need to build from scratch.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href="/about"
-            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 text-sm font-semibold text-[var(--lagoon-deep)] no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
-          >
-            About This Starter
-          </a>
-          <a
-            href="https://tanstack.com/router"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-5 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)]"
-          >
-            Router Guide
-          </a>
+    <main className="min-h-[calc(100dvh-4rem)]">
+      {/* Hero */}
+      <section className="relative overflow-hidden px-6 pb-20 pt-24 sm:pt-32">
+        {/* Subtle background glow */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -top-32 left-1/2 h-[480px] w-[720px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute -right-24 top-48 h-[320px] w-[320px] rounded-full bg-secondary/15 blur-3xl" />
+        </div>
+
+        <div className="rise-in mx-auto max-w-3xl text-center">
+          <Badge variant="secondary" className="mb-6">
+            Open Source
+          </Badge>
+          <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            Organize your work, <span className="text-primary">visually</span>
+          </h1>
+          <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground">
+            A modern Kanban board built with React, TanStack, and shadcn/ui. Drag, drop, and
+            collaborate — all in one place.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button size="lg">
+              Get Started
+              <ArrowRight className="ml-1 size-4" />
+            </Button>
+            <Button variant="outline" size="lg">
+              View Demo
+            </Button>
+          </div>
         </div>
       </section>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          ["Type-Safe Routing", "Routes and links stay in sync across every page."],
-          ["Server Functions", "Call server code from your UI without creating API boilerplate."],
-          ["Streaming by Default", "Ship progressively rendered responses for faster experiences."],
-          ["Tailwind Native", "Design quickly with utility-first styling and reusable tokens."],
-        ].map(([title, desc], index) => (
-          <article
-            key={title}
-            className="island-shell feature-card rise-in rounded-2xl p-5"
-            style={{ animationDelay: `${index * 90 + 80}ms` }}
-          >
-            <h2 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">{title}</h2>
-            <p className="m-0 text-sm text-[var(--sea-ink-soft)]">{desc}</p>
-          </article>
-        ))}
+      <Separator className="mx-auto max-w-5xl" />
+
+      {/* Features */}
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-5xl">
+          <div className="rise-in mb-12 text-center" style={{ animationDelay: "100ms" }}>
+            <h2 className="mb-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Everything you need
+            </h2>
+            <p className="text-muted-foreground">
+              Simple tools to keep your projects moving forward.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature, i) => (
+              <Card
+                key={feature.title}
+                className="rise-in group transition-shadow hover:shadow-lg"
+                style={{ animationDelay: `${150 + i * 60}ms` }}
+              >
+                <CardHeader>
+                  <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <feature.icon className="size-5" />
+                  </div>
+                  <CardTitle className="text-base">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{feature.description}</CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section className="island-shell mt-8 rounded-2xl p-6">
-        <p className="island-kicker mb-2">Quick Start</p>
-        <ul className="m-0 list-disc space-y-2 pl-5 text-sm text-[var(--sea-ink-soft)]">
-          <li>
-            Edit <code>src/routes/index.tsx</code> to customize the home page.
-          </li>
-          <li>
-            Update <code>src/components/Header.tsx</code> and <code>src/components/Footer.tsx</code>{" "}
-            for brand links.
-          </li>
-          <li>
-            Add routes in <code>src/routes</code> and tweak visual tokens in{" "}
-            <code>src/styles.css</code>.
-          </li>
-        </ul>
+      {/* CTA */}
+      <section className="px-6 pb-24 pt-8">
+        <div className="rise-in mx-auto max-w-2xl text-center" style={{ animationDelay: "400ms" }}>
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-8 sm:p-12">
+              <h3 className="mb-3 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                Ready to get organized?
+              </h3>
+              <p className="mb-6 text-muted-foreground">
+                Start managing your projects with a clean, visual workflow.
+              </p>
+              <Button size="lg">
+                Create your first board
+                <ArrowRight className="ml-1 size-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </section>
     </main>
   );
 }
+
+const features = [
+  {
+    icon: Kanban,
+    title: "Kanban Boards",
+    description: "Visualize work with customizable columns and drag-and-drop cards.",
+  },
+  {
+    icon: Layers,
+    title: "Multiple Lists",
+    description: "Create as many lists as you need to organize tasks your way.",
+  },
+  {
+    icon: Zap,
+    title: "Real-time Updates",
+    description: "Changes sync instantly so your team is always on the same page.",
+  },
+  {
+    icon: Users,
+    title: "Collaboration",
+    description: "Invite teammates, assign tasks, and track progress together.",
+  },
+];
