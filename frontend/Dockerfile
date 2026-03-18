@@ -16,8 +16,9 @@ WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy full build context (vite preview needs config + dist + node_modules)
+# vite preview with TanStack Start needs src/ for router resolution
 COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/src /app/src
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/vite.config.ts /app/
