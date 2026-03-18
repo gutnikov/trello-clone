@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Separator } from "#/components/ui/separator";
-import { cn } from "#/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 
 const navLinkClass =
