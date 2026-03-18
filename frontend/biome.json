@@ -37,6 +37,7 @@
     }
   },
   "files": {
-    "includes": ["src/**"]
+    "includes": ["src/**"],
+    "experimentalScannerIgnores": ["src/routeTree.gen.ts"]
   }
 }
