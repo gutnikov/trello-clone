@@ -4,18 +4,34 @@ on:
   pull_request:
     types: [closed]
 
+env:
+  STAGING_DIR: /home/deploy/staging
+
 jobs:
   cleanup:
-    name: Teardown Staging Environment
-    runs-on: ubuntu-latest
+    name: Teardown PR Preview
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - name: Tear down preview stack
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          PROJECT="preview-pr-${PR_NUMBER}"
+          PREVIEW_DIR="${STAGING_DIR}/pr-${PR_NUMBER}"
 
-      # CUSTOMIZE: Teardown the staging environment for this PR
-      # Example:
-      # - name: Remove staging deployment
-      #   run: |
-      #     ssh staging-server "docker compose -f docker-compose.staging.yml down --rmi all"
-      #     # Or remove the PR-specific namespace/container
-      - name: Log cleanup
-        run: echo "Staging environment for PR #${{ github.event.pull_request.number }} would be cleaned up here"
+          # Stop and remove all containers, networks, and volumes for this PR
+          if [ -d "${PREVIEW_DIR}" ]; then
+            cd "${PREVIEW_DIR}"
+            docker compose \
+              -f docker-compose.staging.yml \
+              -p "${PROJECT}" \
+              down --rmi local --volumes --remove-orphans 2>/dev/null || true
+          fi
+
+          # Also try without the directory (in case compose file is gone)
+          docker compose -p "${PROJECT}" down --rmi local --volumes --remove-orphans 2>/dev/null || true
+
+          # Remove the PR directory
+          rm -rf "${PREVIEW_DIR}"
+
+          echo "Preview environment for PR #${PR_NUMBER} has been torn down"

@@ -4,9 +4,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     environment:
       - ENV=staging
+      - PR_NUMBER=${PR_NUMBER:-0}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
@@ -18,9 +19,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
+      - API_URL=http://backend:8000
+      - PR_NUMBER=${PR_NUMBER:-0}
     depends_on:
       backend:
         condition: service_healthy

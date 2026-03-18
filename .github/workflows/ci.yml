@@ -6,99 +6,74 @@ on:
   pull_request:
     branches: [main]
 
+# Cancel in-progress runs for the same branch/PR
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_CACHE_DIR: /home/deploy/.cache/uv
+  PNPM_HOME: /home/deploy/.local/share/pnpm
+  COREPACK_HOME: /home/deploy/.cache/corepack
+
 jobs:
   lint:
     name: Lint & Format
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-
-      - name: Set up Python
-        run: uv python install 3.12
+      - name: Install uv (if missing)
+        run: which uv || curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Install backend dependencies
-        run: cd backend && uv sync --all-extras
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          cd backend && uv sync --all-extras
 
       - name: Run pre-commit
-        run: cd backend && uv run pre-commit run --all-files
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          cd backend && uv run pre-commit run --all-files
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
-
-      - name: Install frontend dependencies
-        run: cd frontend && pnpm install --frozen-lockfile
+      - name: Install pnpm + frontend dependencies
+        run: |
+          corepack enable || true
+          corepack prepare pnpm@10 --activate || npm install -g pnpm@10
+          cd frontend && pnpm install --frozen-lockfile
 
       - name: Type check (backend)
-        run: cd backend && uv run python -m mypy src/
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          cd backend && uv run python -m mypy src/
 
       - name: Type check (frontend)
         run: cd frontend && pnpm exec tsc --noEmit
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-
-      - name: Set up Python
-        run: uv python install 3.12
+      - name: Install uv (if missing)
+        run: which uv || curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Install backend dependencies
-        run: cd backend && uv sync --all-extras
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          cd backend && uv sync --all-extras
 
       - name: Run backend tests
-        run: cd backend && uv run python -m pytest tests/ -v
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          cd backend && uv run python -m pytest tests/ -v
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
-
-      - name: Install frontend dependencies
-        run: cd frontend && pnpm install --frozen-lockfile
+      - name: Install pnpm + frontend dependencies
+        run: |
+          corepack enable || true
+          corepack prepare pnpm@10 --activate || npm install -g pnpm@10
+          cd frontend && pnpm install --frozen-lockfile
 
       - name: Run frontend tests
         run: cd frontend && pnpm vitest run
-
-  # deploy-preview:
-  #   runs-on: ubuntu-latest
-  #   needs: [lint, test]
-  #   # CUSTOMIZE: Deploy PR to preview environment
-  #   # steps:
-  #   #   - uses: actions/checkout@v4
-  #   #   - run: <deploy command> > preview-url.txt
-  #   #   - id: preview
-  #   #     run: echo "url=$(cat preview-url.txt)" >> $GITHUB_OUTPUT
-  #   # outputs:
-  #   #   preview-url: ${{ steps.preview.outputs.url }}
-
-  # e2e:
-  #   runs-on: ubuntu-latest
-  #   needs: [deploy-preview]
-  #   # CUSTOMIZE: E2E tests against the preview deployment
-  #   # steps:
-  #   #   - uses: actions/checkout@v4
-  #   #   - run: npx playwright install --with-deps
-  #   #   - run: BASE_URL=${{ needs.deploy-preview.outputs.preview-url }} npx playwright test

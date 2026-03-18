@@ -1,0 +1,63 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+env:
+  PROD_HOST: 2.56.122.47
+  PROD_USER: deploy
+  PROD_DIR: /home/deploy/production
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: self-hosted
+    # Only deploy after CI passes
+    needs: []
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy production stack
+        run: |
+          # Sync code to the production directory
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.venv' \
+            --exclude='__pycache__' \
+            --exclude='.env.prod' \
+            ./ "${PROD_DIR}/"
+
+          cd "${PROD_DIR}"
+
+          # Production uses fixed ports:
+          #   backend:  8999
+          #   frontend: 3999
+          PR_NUMBER=0 \
+          BACKEND_PORT=8999 \
+          FRONTEND_PORT=3999 \
+            docker compose \
+              -f docker-compose.staging.yml \
+              -p production \
+              up -d --build --wait --remove-orphans
+
+          echo "Production deployed"
+          echo "  Frontend: http://${PROD_HOST}:3999"
+          echo "  Backend:  http://${PROD_HOST}:8999"
+
+      - name: Health check
+        run: |
+          sleep 3
+          STATUS=$(curl -sf "http://${PROD_HOST}:8999/health" || echo '{"status":"unreachable"}')
+          echo "Health check: ${STATUS}"
+          if echo "$STATUS" | grep -q '"ok"'; then
+            echo "Production is healthy"
+          else
+            echo "WARNING: Health check did not return ok"
+            exit 1
+          fi

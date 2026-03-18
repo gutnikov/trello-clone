@@ -4,37 +4,130 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: staging-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  STAGING_HOST: 2.56.122.47
+  STAGING_USER: deploy
+  STAGING_DIR: /home/deploy/staging
+
 jobs:
-  build:
-    name: Build Docker Images
-    runs-on: ubuntu-latest
+  deploy:
+    name: Deploy PR Preview
+    runs-on: self-hosted
+    outputs:
+      preview-url: ${{ steps.deploy.outputs.preview_url }}
+      backend-port: ${{ steps.ports.outputs.backend_port }}
+      frontend-port: ${{ steps.ports.outputs.frontend_port }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build backend image
-        run: docker build -t trello-clone-backend:pr-${{ github.event.pull_request.number }} ./backend
+      # Each PR gets its own isolated Docker Compose stack.
+      # Ports are derived from the PR number to avoid collisions:
+      #   PR #1  -> backend:9001, frontend:4001
+      #   PR #42 -> backend:9042, frontend:4042
+      - name: Compute per-PR ports
+        id: ports
+        run: |
+          PR=${{ github.event.pull_request.number }}
+          echo "backend_port=$((9000 + PR))" >> "$GITHUB_OUTPUT"
+          echo "frontend_port=$((4000 + PR))" >> "$GITHUB_OUTPUT"
+          echo "project_name=preview-pr-${PR}" >> "$GITHUB_OUTPUT"
 
-      - name: Build frontend image
-        run: docker build -t trello-clone-frontend:pr-${{ github.event.pull_request.number }} ./frontend
+      - name: Deploy preview stack
+        id: deploy
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BACKEND_PORT: ${{ steps.ports.outputs.backend_port }}
+          FRONTEND_PORT: ${{ steps.ports.outputs.frontend_port }}
+          PROJECT: ${{ steps.ports.outputs.project_name }}
+        run: |
+          PREVIEW_DIR="${STAGING_DIR}/pr-${PR_NUMBER}"
 
-      # CUSTOMIZE: Push images to a container registry and deploy to staging
-      # Example:
-      # - name: Push to registry
-      #   run: |
-      #     docker tag trello-clone-backend:pr-${{ github.event.pull_request.number }} $REGISTRY/backend:pr-${{ github.event.pull_request.number }}
-      #     docker push $REGISTRY/backend:pr-${{ github.event.pull_request.number }}
-      #
-      # - name: Deploy to staging
-      #   run: |
-      #     ssh staging-server "cd /app && docker compose -f docker-compose.staging.yml pull && docker compose -f docker-compose.staging.yml up -d"
-      #
-      # - name: Write staging URL
-      #   run: echo "https://pr-${{ github.event.pull_request.number }}.staging.example.com" > .orca/staging-url
+          # Create per-PR directory with a clean checkout
+          mkdir -p "${PREVIEW_DIR}"
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.venv' \
+            --exclude='__pycache__' \
+            ./ "${PREVIEW_DIR}/"
 
-  # e2e:
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Run E2E tests against staging
-  #       run: BASE_URL=$(cat .orca/staging-url) npx playwright test
+          # Build and start the isolated stack
+          cd "${PREVIEW_DIR}"
+          PR_NUMBER="${PR_NUMBER}" \
+          BACKEND_PORT="${BACKEND_PORT}" \
+          FRONTEND_PORT="${FRONTEND_PORT}" \
+            docker compose \
+              -f docker-compose.staging.yml \
+              -p "${PROJECT}" \
+              up -d --build --wait --remove-orphans
+
+          PREVIEW_URL="http://${STAGING_HOST}:${FRONTEND_PORT}"
+          echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
+          echo "Preview running at ${PREVIEW_URL}"
+          echo "Backend API at http://${STAGING_HOST}:${BACKEND_PORT}"
+
+      - name: Comment preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = [
+              '### Preview Deployment',
+              '',
+              `| Service | URL |`,
+              `|---------|-----|`,
+              `| Frontend | ${{ steps.deploy.outputs.preview_url }} |`,
+              `| Backend API | http://${{ env.STAGING_HOST }}:${{ steps.ports.outputs.backend_port }} |`,
+              `| Health check | http://${{ env.STAGING_HOST }}:${{ steps.ports.outputs.backend_port }}/health |`,
+              '',
+              `_Stack: \`${{ steps.ports.outputs.project_name }}\`_`,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes('### Preview Deployment'));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+  e2e:
+    name: E2E Tests
+    needs: [deploy]
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install agent-browser (if missing)
+        run: |
+          which agent-browser || npm install -g agent-browser
+          agent-browser install 2>/dev/null || true
+
+      - name: Run E2E smoke tests
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.preview-url }}
+          API_URL: http://${{ env.STAGING_HOST }}:${{ needs.deploy.outputs.backend-port }}
+        run: |
+          chmod +x ./e2e/smoke.sh
+          ./e2e/smoke.sh "$BASE_URL"
+
+      - name: Close browser
+        if: always()
+        run: agent-browser close 2>/dev/null || true
