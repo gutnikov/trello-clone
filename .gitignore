@@ -212,3 +212,9 @@ node_modules/
 .vinxi/
 .nitro/
 .tanstack/
+
+# Skills: allow lib/ inside .claude/skills (overrides Python lib/ rule above)
+!.claude/skills/**/lib/
+# Skills: ignore temp/runtime files
+.claude/skills/playwright-skill/.temp-execution-*
+.claude/skills/playwright-skill/node_modules/
