@@ -11,4 +11,4 @@ app = FastAPI(title="Trello Clone API", version="0.1.0")
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     log.info("health_check", status="ok")
-    return {"status": "ok"}
+    return {"status": "ok", "version": "0.1.0"}
