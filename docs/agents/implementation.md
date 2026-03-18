@@ -29,3 +29,8 @@
 - **Create PR:** `gh pr create --title {title} --body {body} --head {branch}`
 - **Check CI:** `gh pr checks {branch} --json state`
 - **PR status:** `gh pr view {branch} --json state,mergeable`
+
+### LSP
+- **Python:** pyright (`opencode.json`)
+- **TypeScript:** typescript-language-server (`opencode.json`)
+- Config: `opencode.json`
