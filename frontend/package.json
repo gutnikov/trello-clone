@@ -15,7 +15,9 @@
     "format": "biome format ./src",
     "format:fix": "biome format --fix ./src",
     "check": "biome check ./src",
-    "check:fix": "biome check --fix ./src"
+    "check:fix": "biome check --fix ./src",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -28,10 +30,12 @@
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "sirv": "^3.0.2",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.8",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",

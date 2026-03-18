@@ -13,14 +13,13 @@
 - Run: `cd frontend && pnpm vitest run`
 
 ### E2E Tests
-- Location: `e2e/`
-- Framework: agent-browser (shell scripts)
-- Run locally: `./e2e/smoke.sh http://localhost:3000`
-- Run against staging: `./e2e/smoke.sh http://2.56.122.47:400N`
+- Location: `frontend/e2e/`
+- Framework: Playwright
+- Config: `frontend/playwright.config.ts`
+- Naming: `*.spec.ts`
+- Run locally: `cd frontend && pnpm e2e` (auto-starts dev server)
+- Run against staging: `cd frontend && BASE_URL=http://2.56.122.47:400N pnpm e2e`
+- Headed mode: `cd frontend && pnpm e2e:headed`
 
-### E2E Capabilities
-- **Available:** yes
-- **Framework:** agent-browser (CLI browser automation)
-- **Staging:** yes (per-PR preview deploys on `2.56.122.47`)
-- **Run locally:** `./e2e/smoke.sh`
-- **Run against staging:** `./e2e/smoke.sh $PREVIEW_URL`
+### Staging
+- **Available:** yes (per-PR Docker Compose preview deploys on `2.56.122.47`)

@@ -9,7 +9,7 @@ services:
       - ENV=staging
       - PR_NUMBER=${PR_NUMBER:-0}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
       timeout: 5s
       retries: 3

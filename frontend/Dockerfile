@@ -14,12 +14,12 @@ FROM node:20-slim
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
-COPY --from=builder /app/.output /app/.output
+# Production server needs: dist/ (build output), server.js (entry), node_modules/ (runtime deps)
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/server.js /app/
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/node_modules /app/node_modules
 
 EXPOSE 3000
 
-CMD ["node", ".output/server/index.mjs"]
+CMD ["node", "server.js"]
