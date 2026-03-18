@@ -14,16 +14,12 @@ FROM node:20-slim
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
-# vite preview with TanStack Start needs src/ for router resolution
+# Production server needs: dist/ (build output), server.js (entry), node_modules/ (runtime deps)
 COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/src /app/src
+COPY --from=builder /app/server.js /app/
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/vite.config.ts /app/
-COPY --from=builder /app/tsconfig.json /app/
 
 EXPOSE 3000
 
-CMD ["pnpm", "preview", "--port", "3000", "--host", "0.0.0.0"]
+CMD ["node", "server.js"]
