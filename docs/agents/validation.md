@@ -6,3 +6,5 @@
 2. **Formatting (backend):** `cd backend && uv run ruff format --check src/ tests/`
 3. **Linting (frontend):** `cd frontend && pnpm biome lint ./src`
 4. **Formatting (frontend):** `cd frontend && pnpm biome format ./src`
+5. **Type checking (backend):** `cd backend && uv run python -m mypy src/`
+6. **Type checking (frontend):** `cd frontend && pnpm exec tsc --noEmit`
