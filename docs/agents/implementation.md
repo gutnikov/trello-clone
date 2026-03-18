@@ -35,6 +35,10 @@
 - **TypeScript:** typescript-language-server (`opencode.json`)
 - Config: `opencode.json`
 
+### Default Model
+- Model: `anthropic/claude-opus-4-6`
+- Config: `opencode.json`
+
 ### Logging
 - Library: structlog
 - Config: `backend/src/app/logging.py`
