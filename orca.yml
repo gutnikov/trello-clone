@@ -1,0 +1,25 @@
+orca_version: 0.1.0
+tracker:
+  kind: linear
+  api_key: $LINEAR_API_KEY
+  project_slug: CHANGE_ME
+  active_states: Scoping, Planning, Design Feedback Loop, Implementing, Validating,
+    Docs, Review
+  terminal_states: Done, Closed, Cancelled
+  success_terminal_states: Done
+polling:
+  interval_ms: 30000
+workspace:
+  root: ~/orca_workspaces
+hooks:
+  after_create: git clone $REPO_URL . && git checkout -b {{issue.identifier}}
+  before_run: mkdir -p .orca && echo 'Install your dependencies here'
+  timeout_ms: 120000
+agent:
+  max_concurrent_agents: 5
+  max_turns: 30
+  max_retry_backoff_ms: 300000
+opencode:
+  model: opus
+server:
+  port: 8080
