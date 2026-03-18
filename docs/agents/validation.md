@@ -11,3 +11,10 @@
 7. **Unit tests (backend):** `cd backend && uv run python -m pytest tests/ -v`
 8. **Unit tests (frontend):** `cd frontend && pnpm vitest run`
 9. **Pre-commit hooks:** `cd backend && uv run pre-commit install` (install), `cd backend && uv run pre-commit run --all-files` (run all)
+
+### CI
+- Platform: GitHub Actions
+- Workflow: `.github/workflows/ci.yml`
+- Trigger: push to main, PRs to main
+- Lint job: runs pre-commit (ruff + biome), mypy, tsc
+- Test job: runs pytest + vitest
