@@ -7,11 +7,17 @@ test("homepage loads and shows Hello World", async ({ page }) => {
 
 test("homepage button triggers alert with 42", async ({ page }) => {
   await page.goto("/");
-  const dialogPromise = page.waitForEvent("dialog");
+
+  // Register a dialog handler that auto-accepts before clicking.
+  // alert() blocks JS execution, so the click won't resolve until the dialog is dismissed.
+  let dialogMessage = "";
+  page.on("dialog", async (dialog) => {
+    dialogMessage = dialog.message();
+    await dialog.accept();
+  });
+
   await page.getByRole("button", { name: /the answer/i }).click();
-  const dialog = await dialogPromise;
-  expect(dialog.message()).toBe("42");
-  await dialog.accept();
+  expect(dialogMessage).toBe("42");
 });
 
 test("navigation to about page works", async ({ page }) => {
