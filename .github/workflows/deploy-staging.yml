@@ -1,0 +1,40 @@
+name: Deploy Staging
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t trello-clone-backend:pr-${{ github.event.pull_request.number }} ./backend
+
+      - name: Build frontend image
+        run: docker build -t trello-clone-frontend:pr-${{ github.event.pull_request.number }} ./frontend
+
+      # CUSTOMIZE: Push images to a container registry and deploy to staging
+      # Example:
+      # - name: Push to registry
+      #   run: |
+      #     docker tag trello-clone-backend:pr-${{ github.event.pull_request.number }} $REGISTRY/backend:pr-${{ github.event.pull_request.number }}
+      #     docker push $REGISTRY/backend:pr-${{ github.event.pull_request.number }}
+      #
+      # - name: Deploy to staging
+      #   run: |
+      #     ssh staging-server "cd /app && docker compose -f docker-compose.staging.yml pull && docker compose -f docker-compose.staging.yml up -d"
+      #
+      # - name: Write staging URL
+      #   run: echo "https://pr-${{ github.event.pull_request.number }}.staging.example.com" > .orca/staging-url
+
+  # e2e:
+  #   needs: [build]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Run E2E tests against staging
+  #       run: BASE_URL=$(cat .orca/staging-url) npx playwright test

@@ -18,3 +18,12 @@
 - Trigger: push to main, PRs to main
 - Lint job: runs pre-commit (ruff + biome), mypy, tsc
 - Test job: runs pytest + vitest
+
+### Staging Environment
+- **Approach:** Docker Compose staging
+- **URL source:** `.orca/staging-url` (written by deploy-staging CI job, needs customization)
+- **Deploy workflow:** `.github/workflows/deploy-staging.yml`
+- **Cleanup workflow:** `.github/workflows/cleanup-staging.yml`
+- **Docker Compose:** `docker-compose.staging.yml`
+- **Logs:** `docker compose -f docker-compose.staging.yml logs`
+- **E2E against staging:** not yet configured

@@ -11,3 +11,6 @@
 - Framework: vitest
 - Naming: `*.test.ts` / `*.test.tsx`
 - Run: `cd frontend && pnpm vitest run`
+
+### Staging
+- **Available:** yes (Docker Compose based, needs deployment target customization)

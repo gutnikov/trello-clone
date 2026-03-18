@@ -1,0 +1,21 @@
+name: Cleanup Staging
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    name: Teardown Staging Environment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # CUSTOMIZE: Teardown the staging environment for this PR
+      # Example:
+      # - name: Remove staging deployment
+      #   run: |
+      #     ssh staging-server "docker compose -f docker-compose.staging.yml down --rmi all"
+      #     # Or remove the PR-specific namespace/container
+      - name: Log cleanup
+        run: echo "Staging environment for PR #${{ github.event.pull_request.number }} would be cleaned up here"
