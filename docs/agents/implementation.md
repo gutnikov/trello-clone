@@ -21,3 +21,11 @@
 - **Active states:** Scoping, Planning, Design Feedback Loop, Implementing, Validating, Docs, Review
 - **Terminal states:** Done, Closed, Cancelled
 - **API endpoint:** https://api.linear.app/graphql
+
+### Git Hosting
+- **Host:** GitHub
+- **Repo:** gutnikov/trello-clone
+- **CLI:** gh
+- **Create PR:** `gh pr create --title {title} --body {body} --head {branch}`
+- **Check CI:** `gh pr checks {branch} --json state`
+- **PR status:** `gh pr view {branch} --json state,mergeable`
