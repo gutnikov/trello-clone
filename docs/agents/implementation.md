@@ -34,3 +34,9 @@
 - **Python:** pyright (`opencode.json`)
 - **TypeScript:** typescript-language-server (`opencode.json`)
 - Config: `opencode.json`
+
+### Logging
+- Library: structlog
+- Config: `backend/src/app/logging.py`
+- Import: `from app.logging import get_logger, setup_logging`
+- Format: JSON to stdout
