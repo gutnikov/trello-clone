@@ -8,3 +8,5 @@
 4. **Formatting (frontend):** `cd frontend && pnpm biome format ./src`
 5. **Type checking (backend):** `cd backend && uv run python -m mypy src/`
 6. **Type checking (frontend):** `cd frontend && pnpm exec tsc --noEmit`
+7. **Unit tests (backend):** `cd backend && uv run python -m pytest tests/ -v`
+8. **Unit tests (frontend):** `cd frontend && pnpm vitest run`

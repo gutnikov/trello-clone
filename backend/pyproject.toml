@@ -25,6 +25,10 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "N", "UP", "B", "SIM", "ASYNC"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
