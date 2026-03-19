@@ -1,42 +1,64 @@
 {
-  "issue": "TRE-35",
-  "agent": "implementation",
+  "issue": "TRE-36",
+  "agent": "docs",
   "step": "completed",
-  "scope_score": 4,
+  "scope_score": 6,
   "decision": "ATOMIC",
   "affected_files": [
-    "backend/src/app/routers/__init__.py",
+    "backend/src/app/routers/boards.py",
     "backend/src/app/main.py",
-    "backend/tests/conftest.py",
-    "backend/tests/test_conftest_fixtures.py"
+    "backend/tests/test_api_boards.py"
   ],
   "subsystems": [
-    "fastapi-app-layer",
-    "test-infrastructure"
+    "fastapi-app-layer"
   ],
+  "artifacts": {
+    "plan": "docs/plans/TRE-36-plan.md",
+    "feedback_loop": "docs/feedback-loops/TRE-36-feedback.md",
+    "doc_impact": "docs/plans/TRE-36-doc-impact.md",
+    "scope": "docs/plans/TRE-36-scope.md"
+  },
   "retry_count": 0,
-  "attempt_count": 2,
-  "pr_url": "https://github.com/gutnikov/trello-clone/pull/5",
-  "ci_runs": [
-    "https://github.com/gutnikov/trello-clone/actions/runs/23285069007",
-    "https://github.com/gutnikov/trello-clone/actions/runs/23285069003"
+  "status": "done",
+  "test_files": [
+    "backend/tests/test_api_boards.py"
   ],
-  "tests_passing": [
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_provides_connected_database",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_has_seeded_board",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_isolation",
-    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_provides_async_client",
-    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_uses_test_db",
-    "test_main.py::TestCORSMiddleware::test_cors_allows_any_origin_by_default",
-    "test_main.py::TestCORSMiddleware::test_cors_preflight_returns_200",
-    "test_main.py::TestCORSMiddleware::test_cors_configured_origins_respected",
-    "test_main.py::TestLifespanLifecycle::test_app_state_has_db_after_startup",
-    "test_main.py::TestLifespanLifecycle::test_lifespan_seeds_default_board",
-    "test_main.py::TestLifespanLifecycle::test_health_endpoint_still_works"
-  ],
-  "validation_fixes": [
-    "Fixed ruff I001 import sorting violation in tests/test_main.py (removed extra blank line)",
-    "Fixed Docker startup failure by adding parent directory creation (Path.mkdir) before DB connect in lifespan"
-  ],
-  "status": "done"
+  "test_results": {
+    "new_tests_count": 7,
+    "new_tests_passed": 7,
+    "new_tests_failed": 0,
+    "existing_tests_passed": 47,
+    "total_passed": 54,
+    "total_failed": 0
+  },
+  "implementation_summary": {
+    "files_created": ["backend/src/app/routers/boards.py"],
+    "files_modified": ["backend/src/app/main.py"],
+    "schemas_defined": ["CardResponse", "ListWithCards", "BoardDetailResponse", "BoardUpdateRequest", "BoardResponse"],
+    "endpoints": ["GET /api/board", "PUT /api/board"]
+  },
+  "validation": {
+    "pr_url": "https://github.com/gutnikov/trello-clone/pull/8",
+    "ci_result": "PASS",
+    "ci_runs": {
+      "ci": "https://github.com/gutnikov/trello-clone/actions/runs/23286343892",
+      "deploy_staging": "https://github.com/gutnikov/trello-clone/actions/runs/23286343873"
+    },
+    "jobs": {
+      "lint_format": "PASS",
+      "test": "PASS",
+      "deploy_pr_preview": "PASS",
+      "e2e_tests": "PASS"
+    }
+  },
+  "docs": {
+    "docs_updated": [
+      "docs/agents/implementation.md",
+      "docs/agents/design-feedback-loop.md",
+      "README.md",
+      "docs/agents/scoping.md"
+    ],
+    "validation": "PASS",
+    "pr_url": "https://github.com/gutnikov/trello-clone/pull/8"
+  }
 }
