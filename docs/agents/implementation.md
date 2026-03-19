@@ -56,7 +56,19 @@
 ### App Configuration
 - **CORS:** Configured in `backend/src/app/main.py` via `CORSMiddleware`. Defaults to allow all origins (`*`) for dev. Set `CORS_ORIGINS` env var (comma-separated) for production.
 - **Lifespan:** The `lifespan` async context manager in `main.py` connects to the database, initializes the schema, seeds the default board on startup, and closes the DB on shutdown. The `Database` instance is available at `app.state.db`.
-- **Router package:** `backend/src/app/routers/__init__.py` is the router package. Add new endpoint modules (e.g., `boards.py`, `lists.py`, `cards.py`) here and include them in the app.
+- **Router package:** `backend/src/app/routers/__init__.py` is the router package. Add new endpoint modules (e.g., `boards.py`, `cards.py`) here and register them in `main.py`.
+
+### Router Implementation Pattern
+
+The `lists.py` router (`backend/src/app/routers/lists.py`) establishes the canonical pattern for API endpoint modules. Future routers (boards, cards) should follow this template:
+
+1. **Pydantic request models** — Define request body schemas (e.g., `CreateListRequest`, `UpdateListRequest`) as `BaseModel` subclasses directly in the router file. These validate input at the boundary.
+2. **Database access** — Access the database via `request.app.state.db` (the `Database` instance injected during app lifespan). Do not import or instantiate the database directly.
+3. **Route ordering** — Define static path routes (e.g., `PUT /lists/reorder`) **before** parameterized path routes (e.g., `PUT /lists/{list_id}`). FastAPI matches routes in definition order, so `/lists/reorder` must come before `/lists/{list_id}` to avoid `"reorder"` being captured as a `list_id` parameter.
+4. **Structured logging** — Use `from app.logging import get_logger` with a `module` parameter (e.g., `get_logger(module="routers.lists")`). Log one event per endpoint action (e.g., `list_created`, `list_updated`, `list_deleted`).
+5. **Return types** — Return `dict[str, Any]` (via `model.model_dump()`) for single-entity responses, `list[dict[str, Any]]` for collections. Use `Response(status_code=204)` for delete endpoints.
+6. **Error handling** — Raise `HTTPException(status_code=404, detail="<Entity> not found")` when a requested resource does not exist.
+7. **Router registration** — Import the router in `backend/src/app/main.py` and register it with `app.include_router(router, prefix="/api")`. See `main.py:54` for the lists router registration.
 
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
