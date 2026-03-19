@@ -11,6 +11,15 @@ A Trello-style kanban board application.
 | Database | SQLite (via aiosqlite)            |
 | Logging  | structlog (JSON to stdout)        |
 
+## Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CORS_ORIGINS` | Comma-separated list of allowed CORS origins | `*` (all origins, for development) |
+| `DB_PATH` | Path to the SQLite database file | `data/trello.db` |
+
+Set `CORS_ORIGINS` to your frontend domain in production (e.g., `https://app.example.com`).
+
 ## Getting Started
 
 ```bash
