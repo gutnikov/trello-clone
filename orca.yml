@@ -12,8 +12,8 @@ polling:
 workspace:
   root: ~/orca_workspaces
 hooks:
-  after_create: git clone $REPO_URL . && git checkout -b {{issue.identifier}}
-  before_run: mkdir -p .orca && echo 'Install your dependencies here'
+  after_create: git clone $REPO_URL . && (git checkout {{issue.identifier}} && git pull origin main --rebase --no-edit || git checkout -b {{issue.identifier}})
+  before_run: mkdir -p .orca && git stash --include-untracked -q && git fetch origin main && git merge origin/main --no-edit || true
   timeout_ms: 120000
 agent:
   max_concurrent_agents: 5
