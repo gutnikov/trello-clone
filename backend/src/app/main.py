@@ -3,6 +3,7 @@
 import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,6 +19,7 @@ log = get_logger()
 async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     """Manage database lifecycle: connect on startup, close on shutdown."""
     db_path = os.environ.get("DB_PATH", "data/trello.db")
+    Path(db_path).parent.mkdir(parents=True, exist_ok=True)
     db = Database(db_path)
     await db.connect()
     await db.init_schema()

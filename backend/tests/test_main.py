@@ -16,7 +16,6 @@ from httpx import ASGITransport
 from app.database import Database
 from app.main import app
 
-
 # ---------------------------------------------------------------------------
 # Helpers — minimal test client without relying on conftest.py fixtures
 # ---------------------------------------------------------------------------

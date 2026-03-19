@@ -15,27 +15,28 @@
     "test-infrastructure"
   ],
   "retry_count": 0,
-  "attempt_count": 1,
-  "plan_steps_completed": [
-    "step-1-router-package-init",
-    "step-2-cors-middleware",
-    "step-3-lifespan-context-manager",
-    "step-4-conftest-fixtures"
+  "attempt_count": 2,
+  "pr_url": "https://github.com/gutnikov/trello-clone/pull/5",
+  "ci_runs": [
+    "https://github.com/gutnikov/trello-clone/actions/runs/23285069007",
+    "https://github.com/gutnikov/trello-clone/actions/runs/23285069003"
   ],
   "tests_passing": [
+    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_provides_connected_database",
+    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_has_seeded_board",
+    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_isolation",
+    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_provides_async_client",
+    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_uses_test_db",
     "test_main.py::TestCORSMiddleware::test_cors_allows_any_origin_by_default",
     "test_main.py::TestCORSMiddleware::test_cors_preflight_returns_200",
     "test_main.py::TestCORSMiddleware::test_cors_configured_origins_respected",
     "test_main.py::TestLifespanLifecycle::test_app_state_has_db_after_startup",
     "test_main.py::TestLifespanLifecycle::test_lifespan_seeds_default_board",
-    "test_main.py::TestLifespanLifecycle::test_health_endpoint_still_works",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_provides_connected_database",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_has_seeded_board",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_isolation",
-    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_provides_async_client",
-    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_uses_test_db"
+    "test_main.py::TestLifespanLifecycle::test_health_endpoint_still_works"
   ],
-  "total_tests_passing": 47,
-  "total_tests_failing": 0,
-  "status": "completed"
+  "validation_fixes": [
+    "Fixed ruff I001 import sorting violation in tests/test_main.py (removed extra blank line)",
+    "Fixed Docker startup failure by adding parent directory creation (Path.mkdir) before DB connect in lifespan"
+  ],
+  "status": "done"
 }
