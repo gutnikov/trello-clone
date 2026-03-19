@@ -1,7 +1,7 @@
 {
   "issue": "TRE-36",
   "agent": "docs",
-  "step": "updating-docs",
+  "step": "completed",
   "scope_score": 6,
   "decision": "ATOMIC",
   "affected_files": [
@@ -19,7 +19,7 @@
     "scope": "docs/plans/TRE-36-scope.md"
   },
   "retry_count": 0,
-  "status": "in_progress",
+  "status": "done",
   "test_files": [
     "backend/tests/test_api_boards.py"
   ],
@@ -58,7 +58,7 @@
       "README.md",
       "docs/agents/scoping.md"
     ],
-    "validation": "pending",
-    "pr_url": null
+    "validation": "PASS",
+    "pr_url": "https://github.com/gutnikov/trello-clone/pull/8"
   }
 }
