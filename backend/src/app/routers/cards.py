@@ -55,7 +55,7 @@ def _get_db(request: Request) -> Database:
 
 
 @router.post("/cards", status_code=201)
-async def create_card(body: CreateCardRequest, request: Request) -> dict:
+async def create_card(body: CreateCardRequest, request: Request) -> dict[str, object]:
     """Create a new card in the specified list with auto-assigned position."""
     db = _get_db(request)
     existing_cards = await db.get_cards_by_list(body.list_id)
@@ -67,7 +67,7 @@ async def create_card(body: CreateCardRequest, request: Request) -> dict:
 
 
 @router.put("/cards/{card_id}")
-async def update_card(card_id: str, body: UpdateCardRequest, request: Request) -> dict:
+async def update_card(card_id: str, body: UpdateCardRequest, request: Request) -> dict[str, object]:
     """Update a card's title."""
     db = _get_db(request)
     updated = await db.update_card(card_id, title=body.title)
@@ -89,7 +89,7 @@ async def delete_card(card_id: str, request: Request) -> Response:
 
 
 @router.put("/cards/{card_id}/move")
-async def move_card(card_id: str, body: MoveCardRequest, request: Request) -> dict:
+async def move_card(card_id: str, body: MoveCardRequest, request: Request) -> dict[str, object]:
     """Move a card to a different list and/or reorder within a list."""
     db = _get_db(request)
 
