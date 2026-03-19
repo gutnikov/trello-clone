@@ -16,3 +16,17 @@ repos:
         language: system
         files: ^frontend/src/
         pass_filenames: false
+
+      - id: mypy
+        name: mypy (backend)
+        entry: bash -c 'cd backend && uv run python -m mypy src/'
+        language: system
+        files: ^backend/src/
+        pass_filenames: false
+
+      - id: tsc
+        name: tsc --noEmit (frontend)
+        entry: bash -c 'cd frontend && pnpm exec tsc --noEmit'
+        language: system
+        files: ^frontend/src/
+        pass_filenames: false
