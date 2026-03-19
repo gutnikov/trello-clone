@@ -24,9 +24,7 @@ interface BoardProps {
 export function Board({ board }: BoardProps) {
   return (
     <div className="flex h-full flex-col">
-      <h1 className="px-6 py-4 text-2xl font-bold text-foreground">
-        {board.title}
-      </h1>
+      <h1 className="px-6 py-4 text-2xl font-bold text-foreground">{board.title}</h1>
       <div
         data-testid="board-lists-container"
         className="flex flex-1 gap-4 overflow-x-auto px-6 pb-6"

@@ -188,3 +188,22 @@
 .rise-in {
   animation: rise-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* Board layout — horizontal scroll container for list columns */
+[data-testid="board-lists-container"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+[data-testid="board-lists-container"]::-webkit-scrollbar {
+  height: 8px;
+}
+
+[data-testid="board-lists-container"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-testid="board-lists-container"]::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
