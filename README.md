@@ -20,6 +20,14 @@ A Trello-style kanban board application.
 
 Set `CORS_ORIGINS` to your frontend domain in production (e.g., `https://app.example.com`).
 
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | Health check — returns `{"status": "ok", "version": "0.1.0"}` |
+| `GET` | `/api/board` | Returns the board with all lists and cards in a nested JSON structure |
+| `PUT` | `/api/board` | Updates the board title — accepts `{"title": "..."}`, returns the updated board |
+
 ## Getting Started
 
 ```bash
