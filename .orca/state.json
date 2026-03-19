@@ -1,25 +1,41 @@
 {
-  "issue": "TRE-31",
-  "agent": "docs",
-  "step": "updating-docs",
-  "pr_url": "https://github.com/gutnikov/trello-clone/pull/4",
-  "pr_number": 4,
-  "branch": "TRE-31",
-  "push_completed": true,
-  "pr_created": true,
-  "ci_status": "pass",
-  "ci_checks": {
-    "Test": "SUCCESS",
-    "Lint & Format": "SUCCESS",
-    "Deploy PR Preview": "SUCCESS",
-    "E2E Tests": "SUCCESS"
-  },
-  "retry_count": 0,
-  "doc_updates_completed": [
-    "docs/architecture/adr-001-sqlite-persistence.md",
-    "docs/agents/implementation.md",
-    "README.md"
+  "issue": "TRE-35",
+  "agent": "implementation",
+  "step": "completed",
+  "scope_score": 4,
+  "decision": "ATOMIC",
+  "affected_files": [
+    "backend/src/app/routers/__init__.py",
+    "backend/src/app/main.py",
+    "backend/tests/conftest.py",
+    "backend/tests/test_conftest_fixtures.py"
   ],
-  "doc_updates_pending": [],
-  "status": "in_progress"
+  "subsystems": [
+    "fastapi-app-layer",
+    "test-infrastructure"
+  ],
+  "retry_count": 0,
+  "attempt_count": 1,
+  "plan_steps_completed": [
+    "step-1-router-package-init",
+    "step-2-cors-middleware",
+    "step-3-lifespan-context-manager",
+    "step-4-conftest-fixtures"
+  ],
+  "tests_passing": [
+    "test_main.py::TestCORSMiddleware::test_cors_allows_any_origin_by_default",
+    "test_main.py::TestCORSMiddleware::test_cors_preflight_returns_200",
+    "test_main.py::TestCORSMiddleware::test_cors_configured_origins_respected",
+    "test_main.py::TestLifespanLifecycle::test_app_state_has_db_after_startup",
+    "test_main.py::TestLifespanLifecycle::test_lifespan_seeds_default_board",
+    "test_main.py::TestLifespanLifecycle::test_health_endpoint_still_works",
+    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_provides_connected_database",
+    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_has_seeded_board",
+    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_isolation",
+    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_provides_async_client",
+    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_uses_test_db"
+  ],
+  "total_tests_passing": 47,
+  "total_tests_failing": 0,
+  "status": "completed"
 }
