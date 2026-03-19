@@ -12,6 +12,11 @@
 - Naming: `*.test.ts` / `*.test.tsx`
 - Run: `cd frontend && pnpm vitest run`
 
+### Frontend API Client Tests
+- **Canonical example:** `frontend/tests/api.test.ts` — demonstrates testing the API client module (`frontend/src/lib/api.ts`) using vitest with `globalThis.fetch` mocked via `vi.fn()`.
+- **Pattern:** Mock `fetch` to return controlled `Response` objects, then assert the API function returns the correct typed result or throws on error responses. Each API function gets its own `describe` block.
+- **Board store tests:** `frontend/tests/board-store.test.ts` — tests React Query hooks by wrapping them in a `QueryClientProvider` and asserting on query/mutation behavior.
+
 ### E2E Tests
 - Location: `frontend/e2e/`
 - Framework: Playwright
