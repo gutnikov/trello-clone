@@ -15,11 +15,9 @@ These tests correspond to the feedback loop plan in docs/feedback-loops/TRE-38-f
 import uuid
 
 import httpx
-import pytest
 
 from app.database import Database
 from app.models import Board, Card, List
-
 
 # ===========================================================================
 # Helpers
