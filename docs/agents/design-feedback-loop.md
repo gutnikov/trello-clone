@@ -41,5 +41,16 @@ The canonical pattern for API integration tests is established in `backend/tests
 - **Test data setup:** The `db` fixture provides a seeded default board. Create additional test data directly via `db.create_list()` / `db.create_card()` within the test method — no extra fixtures needed.
 - **Assertion messages:** Include descriptive assertion messages to make failures easy to diagnose.
 
+#### List API Endpoint Tests
+- **Reference:** `backend/tests/test_api_lists.py` — extends the canonical pattern for list CRUD and reorder endpoints.
+- **Structure:** Organize tests into classes by operation (e.g., `TestCreateList`, `TestUpdateList`, `TestDeleteList`, `TestReorderLists`). Each class groups related test cases for a single endpoint.
+- **Patterns to follow:**
+  - Use `db` fixture to set up preconditions (create boards, lists, cards) via `Database` methods before calling the API.
+  - Use `client` fixture (`httpx.AsyncClient`) to make HTTP requests against the test app.
+  - Test auto-assigned position management (verify sequential positions on creation).
+  - Test 404 handling for non-existent resources with both status code and `detail` message assertions.
+  - Test CASCADE delete behavior by verifying child entities (e.g., cards) are removed when a parent (e.g., list) is deleted.
+  - Include descriptive assertion messages explaining expected vs. actual values.
+
 ### Staging
 - **Available:** yes (per-PR Docker Compose preview deploys on `2.56.122.47`)

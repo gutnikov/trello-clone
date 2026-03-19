@@ -1,64 +1,57 @@
 {
-  "issue": "TRE-36",
+  "issue": "TRE-37",
   "agent": "docs",
   "step": "completed",
   "scope_score": 6,
   "decision": "ATOMIC",
   "affected_files": [
-    "backend/src/app/routers/boards.py",
+    "backend/src/app/routers/lists.py",
     "backend/src/app/main.py",
-    "backend/tests/test_api_boards.py"
+    "backend/tests/test_api_lists.py"
   ],
   "subsystems": [
-    "fastapi-app-layer"
+    "fastapi-routing-layer",
+    "test-infrastructure"
   ],
   "artifacts": {
-    "plan": "docs/plans/TRE-36-plan.md",
-    "feedback_loop": "docs/feedback-loops/TRE-36-feedback.md",
-    "doc_impact": "docs/plans/TRE-36-doc-impact.md",
-    "scope": "docs/plans/TRE-36-scope.md"
+    "plan": "docs/plans/TRE-37-plan.md",
+    "feedback_loop": "docs/feedback-loops/TRE-37-feedback.md",
+    "doc_impact": "docs/plans/TRE-37-doc-impact.md"
   },
-  "retry_count": 0,
-  "status": "done",
-  "test_files": [
-    "backend/tests/test_api_boards.py"
-  ],
   "test_results": {
-    "new_tests_count": 7,
-    "new_tests_passed": 7,
-    "new_tests_failed": 0,
-    "existing_tests_passed": 47,
-    "total_passed": 54,
-    "total_failed": 0
+    "total": 53,
+    "failed": 0,
+    "passed": 53,
+    "errors": 0,
+    "new_tests_passed": 6,
+    "existing_tests_unaffected": true
   },
-  "implementation_summary": {
-    "files_created": ["backend/src/app/routers/boards.py"],
-    "files_modified": ["backend/src/app/main.py"],
-    "schemas_defined": ["CardResponse", "ListWithCards", "BoardDetailResponse", "BoardUpdateRequest", "BoardResponse"],
-    "endpoints": ["GET /api/board", "PUT /api/board"]
-  },
-  "validation": {
-    "pr_url": "https://github.com/gutnikov/trello-clone/pull/8",
-    "ci_result": "PASS",
-    "ci_runs": {
-      "ci": "https://github.com/gutnikov/trello-clone/actions/runs/23286343892",
-      "deploy_staging": "https://github.com/gutnikov/trello-clone/actions/runs/23286343873"
-    },
+  "ci_results": {
+    "result": "PASS",
+    "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
+    "ci_run": "https://github.com/gutnikov/trello-clone/actions/runs/23286745292",
+    "deploy_run": "https://github.com/gutnikov/trello-clone/actions/runs/23286745287",
     "jobs": {
       "lint_format": "PASS",
       "test": "PASS",
-      "deploy_pr_preview": "PASS",
-      "e2e_tests": "PASS"
+      "deploy_preview": "PASS",
+      "e2e": "PASS"
     }
   },
-  "docs": {
-    "docs_updated": [
+  "docs_validation": {
+    "result": "PASS",
+    "checklist_items_addressed": 3,
+    "checklist_items_total": 3,
+    "internal_links_valid": true,
+    "code_references_valid": true,
+    "no_todo_fixme": true,
+    "updated_files": [
       "docs/agents/implementation.md",
       "docs/agents/design-feedback-loop.md",
-      "README.md",
-      "docs/agents/scoping.md"
-    ],
-    "validation": "PASS",
-    "pr_url": "https://github.com/gutnikov/trello-clone/pull/8"
-  }
+      "README.md"
+    ]
+  },
+  "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
+  "attempt_count": 2,
+  "status": "done"
 }

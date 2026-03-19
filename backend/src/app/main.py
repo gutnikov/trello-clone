@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import Database
 from app.logging import get_logger, setup_logging
 from app.routers.boards import router as boards_router
+from app.routers.lists import router as lists_router
 
 setup_logging()
 log = get_logger()
@@ -53,6 +54,7 @@ app.add_middleware(
 
 app.include_router(boards_router, prefix="/api")
 log.info("router_registered", router="boards", prefix="/api")
+app.include_router(lists_router, prefix="/api")
 
 
 @app.get("/health")
