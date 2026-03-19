@@ -104,6 +104,42 @@ Follow the pattern in `frontend/src/lib/board-store.ts`:
 
 See `docs/architecture/adr-002-tanstack-query-state-management.md` for the architectural rationale.
 
+### Frontend Component Pattern
+
+All display components follow the pattern established in `frontend/src/components/Board.tsx`, `BoardList.tsx`, `BoardCard.tsx`, and `EmptyBoard.tsx`:
+
+1. **Named exports** — Components use named exports (e.g., `export function Board()`), not default exports.
+2. **TypeScript props interfaces** — Define a `{Component}Props` interface above the component. Inline child type definitions when the shape is local (e.g., `CardData`, `ListData`).
+3. **`data-testid` attributes** — Add `data-testid` attributes to key container elements for E2E test selectors (e.g., `data-testid="board-list"`, `data-testid="board-card"`, `data-testid="empty-board"`).
+4. **Tailwind CSS** — Use Tailwind utility classes for styling. Reference semantic color tokens (`text-foreground`, `bg-muted/60`, `border-border`, etc.) defined in `frontend/src/styles.css`.
+5. **Position-based ordering** — When rendering ordered items (cards within a list), sort by `position` field before mapping: `[...items].sort((a, b) => a.position - b.position)`.
+
+### Frontend Route Pattern
+
+Routes use TanStack Router's file-based routing. See `frontend/src/routes/board.tsx` for the canonical example:
+
+1. **`createFileRoute`** — Define the route with `createFileRoute("/path")({ component: PageComponent })`.
+2. **Data fetching** — Use React Query hooks (e.g., `useBoard()` from `frontend/src/lib/board-store.ts`) inside the page component.
+3. **Loading/error/empty states** — Handle all three states: loading spinner, error message, and empty state component. Check `isLoading`, then `error`, then empty data before rendering the main content.
+4. **Route tree** — After adding a new route file, regenerate the route tree (`frontend/src/routeTree.gen.ts`) by running `cd frontend && pnpm routes:generate` or starting the dev server (auto-generates).
+
+### SSR and API Proxy
+
+The frontend supports server-side rendering with API data:
+
+- **API proxy** (`frontend/server.js`): In production/staging, `server.js` proxies all `/api/*` requests to the backend service at `API_URL` (defaults to `http://localhost:8000`). This eliminates CORS issues and allows SSR fetch to use the same URL scheme.
+- **SSR-aware base URL** (`frontend/src/lib/api.ts`): The `getApiBase()` function detects server vs. client context. On the server (`typeof window === "undefined"`), it reads `process.env.API_URL` for direct backend access. On the client, it uses the relative `/api` path (proxied by `server.js`).
+- **Router SSR integration** (`frontend/src/router.tsx`): The router creates a `QueryClient` and passes it via `context: { queryClient }`. The `setupRouterSsrQueryIntegration` from `@tanstack/react-router-ssr-query` handles query dehydration/hydration between server and client.
+
+### Pre-commit Type Checks
+
+The `.pre-commit-config.yaml` includes type-checking hooks that run automatically on commit:
+
+- **`mypy`** — Runs `mypy src/` on backend Python files (`backend/src/`)
+- **`tsc --noEmit`** — Runs TypeScript compilation check on frontend source files (`frontend/src/`)
+
+These complement the existing `biome` and `ruff` linting hooks.
+
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
 - **`db` fixture:** Provides an in-memory `Database` instance with schema initialized and the default board seeded. Function-scoped for test isolation. Use this fixture in API endpoint tests rather than creating ad-hoc database setup.

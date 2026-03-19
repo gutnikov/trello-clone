@@ -17,6 +17,12 @@
 - **Pattern:** Mock `fetch` to return controlled `Response` objects, then assert the API function returns the correct typed result or throws on error responses. Each API function gets its own `describe` block.
 - **Board store tests:** `frontend/tests/board-store.test.ts` — tests React Query hooks by wrapping them in a `QueryClientProvider` and asserting on query/mutation behavior.
 
+### Frontend Component Tests
+- **Canonical example:** `frontend/tests/board-components.test.tsx` — demonstrates testing React display components using `@testing-library/react` with `vitest` and `jsdom`.
+- **Pattern:** Use `render()` to mount the component, `screen.getByText()` / `screen.getByTestId()` to find elements, and `within()` for scoped queries inside specific containers. Each component gets its own `describe` block covering export verification and rendering behavior.
+- **Props setup:** Construct typed props objects with test data (board with lists, list with cards, etc.) and pass them directly to the component under test.
+- **Position ordering:** Test that items render in `position` order by verifying DOM node order via `getAllByTestId()`.
+
 ### E2E Tests
 - Location: `frontend/e2e/`
 - Framework: Playwright
@@ -25,6 +31,7 @@
 - Run locally: `cd frontend && pnpm e2e` (auto-starts dev server)
 - Run against staging: `cd frontend && BASE_URL=http://2.56.122.47:400N pnpm e2e`
 - Headed mode: `cd frontend && pnpm e2e:headed`
+- **E2E data seeding pattern:** `frontend/e2e/board.spec.ts` demonstrates seeding test data via the API before assertions and cleaning up afterward. Use `page.request.post("/api/...")` to create lists/cards, wrap assertions in `try/finally` to ensure cleanup via `page.request.delete(...)`, and use `timeout` options on `toBeVisible()` for SSR data loading.
 
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
