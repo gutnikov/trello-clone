@@ -1,42 +1,39 @@
 {
-  "issue": "TRE-35",
-  "agent": "implementation",
+  "issue": "TRE-38",
+  "agent": "design-feedback-loop",
   "step": "completed",
-  "scope_score": 4,
+  "scope_score": 6,
   "decision": "ATOMIC",
   "affected_files": [
-    "backend/src/app/routers/__init__.py",
+    "backend/src/app/routers/cards.py",
     "backend/src/app/main.py",
-    "backend/tests/conftest.py",
-    "backend/tests/test_conftest_fixtures.py"
+    "backend/tests/test_api_cards.py"
   ],
   "subsystems": [
-    "fastapi-app-layer",
-    "test-infrastructure"
+    "api-routing-layer"
   ],
+  "artifacts": {
+    "plan": "docs/plans/TRE-38-plan.md",
+    "feedback_loop": "docs/feedback-loops/TRE-38-feedback.md",
+    "doc_impact": "docs/plans/TRE-38-doc-impact.md"
+  },
+  "feedback_completeness_score": 8,
   "retry_count": 0,
-  "attempt_count": 2,
-  "pr_url": "https://github.com/gutnikov/trello-clone/pull/5",
-  "ci_runs": [
-    "https://github.com/gutnikov/trello-clone/actions/runs/23285069007",
-    "https://github.com/gutnikov/trello-clone/actions/runs/23285069003"
+  "test_files_created": [
+    "backend/tests/test_api_cards.py"
   ],
-  "tests_passing": [
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_provides_connected_database",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_has_seeded_board",
-    "test_conftest_fixtures.py::TestDbFixture::test_db_fixture_isolation",
-    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_provides_async_client",
-    "test_conftest_fixtures.py::TestClientFixture::test_client_fixture_uses_test_db",
-    "test_main.py::TestCORSMiddleware::test_cors_allows_any_origin_by_default",
-    "test_main.py::TestCORSMiddleware::test_cors_preflight_returns_200",
-    "test_main.py::TestCORSMiddleware::test_cors_configured_origins_respected",
-    "test_main.py::TestLifespanLifecycle::test_app_state_has_db_after_startup",
-    "test_main.py::TestLifespanLifecycle::test_lifespan_seeds_default_board",
-    "test_main.py::TestLifespanLifecycle::test_health_endpoint_still_works"
+  "tests_failing": [
+    "test_api_cards.py::TestCreateCard::test_create_card",
+    "test_api_cards.py::TestCreateCard::test_create_card_auto_position",
+    "test_api_cards.py::TestUpdateCard::test_update_card_title",
+    "test_api_cards.py::TestUpdateCard::test_update_card_not_found",
+    "test_api_cards.py::TestDeleteCard::test_delete_card",
+    "test_api_cards.py::TestDeleteCard::test_delete_card_not_found",
+    "test_api_cards.py::TestMoveCard::test_move_card_between_lists",
+    "test_api_cards.py::TestMoveCard::test_reorder_card_within_list",
+    "test_api_cards.py::TestMoveCard::test_move_card_not_found"
   ],
-  "validation_fixes": [
-    "Fixed ruff I001 import sorting violation in tests/test_main.py (removed extra blank line)",
-    "Fixed Docker startup failure by adding parent directory creation (Path.mkdir) before DB connect in lifespan"
-  ],
+  "tests_passing_before": 47,
+  "failure_type": "assertion_errors",
   "status": "done"
 }
