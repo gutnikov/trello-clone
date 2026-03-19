@@ -25,6 +25,7 @@
 - **Location:** `backend/tests/conftest.py`
 - **Available fixtures:** `db` (in-memory Database with schema + seeded default board), `client` (httpx AsyncClient wired to the test app)
 - When writing test scaffolds for API endpoint tests, use the `db` and `client` fixtures from conftest rather than creating new fixture setup. Tests can simply declare `db: Database` or `client: httpx.AsyncClient` as parameters.
+- **Canonical API test example:** `backend/tests/test_api_cards.py` — demonstrates class-based test organization (one class per endpoint group), async helper functions for creating prerequisite data via the `db` fixture, and HTTP assertions against the `client` fixture.
 
 ### API Endpoint Test Patterns
 The canonical pattern for API integration tests is established in `backend/tests/test_api_boards.py`. Follow this pattern for new endpoint tests:

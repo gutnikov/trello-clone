@@ -1,31 +1,23 @@
-# Validation Report — TRE-37
+# Validation Report — TRE-38
 
 ## CI Result: PASS
 
-**PR:** https://github.com/gutnikov/trello-clone/pull/6
-**Branch:** TRE-37
-**Attempt:** 2 (mypy fix applied in commit 792a109)
+**PR:** https://github.com/gutnikov/trello-clone/pull/7
+**Branch:** TRE-38
+**Commit:** 25961c146c0ccd918cc2031e78351b6e9ee51452
 **CI Workflow Runs:**
-- CI: https://github.com/gutnikov/trello-clone/actions/runs/23286549056
-- Deploy Staging: https://github.com/gutnikov/trello-clone/actions/runs/23286549030
+- CI: https://github.com/gutnikov/trello-clone/actions/runs/23286792249
+- Deploy Staging: https://github.com/gutnikov/trello-clone/actions/runs/23286792255
 
 ## Job Results
 
-| Job | Status |
-|-----|--------|
-| Lint & Format | PASS |
-| Test | PASS |
-| Deploy PR Preview | PASS |
-| E2E Tests | PASS |
-
-## Details
-
-- **Lint & Format:** All checks pass — ruff lint/format, biome lint/format, mypy, tsc (previous mypy errors fixed in commit 792a109)
-- **Backend tests (pytest):** PASS — all 53 tests pass including 6 new list endpoint tests
-- **Frontend tests (vitest):** PASS
-- **Deploy PR Preview:** PASS — staging stack deployed and healthy
-- **E2E Tests:** PASS
+| Job | Status | Details |
+|-----|--------|---------|
+| Lint & Format | PASS | pre-commit, mypy, tsc all clean |
+| Test | PASS | All backend + frontend tests pass |
+| Deploy PR Preview | PASS | Preview deployed successfully |
+| E2E Tests | PASS | All E2E tests pass |
 
 ## Summary
 
-All CI checks pass. The mypy type errors from attempt 1 were fixed by parameterizing bare `dict` return types to `dict[str, Any]` and adding explicit type annotations on `model_dump()` returns. PR is ready for review.
+All 4 CI checks pass on the latest commit (25961c1). This includes the docs commit that updated router pattern, API endpoints, and test pattern references. The card API CRUD + move endpoints implementation is fully validated.

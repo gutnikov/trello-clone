@@ -59,6 +59,31 @@ Set `CORS_ORIGINS` to your frontend domain in production (e.g., `https://app.exa
 - Request: `{ "list_ids": ["string"] }` (ordered array of list IDs)
 - Response: `200` with the reordered list of lists
 
+### Cards
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/cards` | Create a new card |
+| `PUT` | `/api/cards/{id}` | Update card title |
+| `DELETE` | `/api/cards/{id}` | Delete a card |
+| `PUT` | `/api/cards/{id}/move` | Move/reorder a card |
+
+**POST /api/cards** — Create a new card with auto-assigned position.
+- Request: `{ "title": "string", "list_id": "string" }`
+- Response: `201` with the created card object (`id`, `title`, `list_id`, `position`)
+
+**PUT /api/cards/{id}** — Update a card's title.
+- Request: `{ "title": "string" }`
+- Response: `200` with the updated card object, or `404` if not found
+
+**DELETE /api/cards/{id}** — Delete a card.
+- Response: `204` No Content, or `404` if not found
+
+**PUT /api/cards/{id}/move** — Move a card to a different list and/or reorder within a list.
+- Request: `{ "list_id": "string", "position": int }`
+- Response: `200` with the updated card object, or `404` if not found
+- Reorders other cards in both source and target lists as needed
+
 ## Getting Started
 
 ```bash
