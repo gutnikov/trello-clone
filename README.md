@@ -6,7 +6,7 @@ A Trello-style kanban board application.
 
 | Layer    | Technology                        |
 |----------|-----------------------------------|
-| Frontend | Astro, React, TypeScript          |
+| Frontend | Astro, React, TypeScript, TanStack React Query |
 | Backend  | FastAPI, Python 3.12+             |
 | Database | SQLite (via aiosqlite)            |
 | Logging  | structlog (JSON to stdout)        |

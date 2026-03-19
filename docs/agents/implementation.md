@@ -71,6 +71,39 @@ All three routers (`boards.py`, `lists.py`, `cards.py`) follow the same canonica
 7. **Status codes** — Return 201 for create, 204 (empty body) for delete, 200 for update. For 204, use `response_class=Response` in the decorator.
 8. **Router registration** — Import the router in `backend/src/app/main.py` and register with `app.include_router(router, prefix="/api")`.
 
+### Frontend Data Layer
+
+The frontend data layer is split into two modules:
+
+- **API client:** `frontend/src/lib/api.ts` — typed async functions wrapping every backend endpoint. Uses the browser `fetch` API with a relative `/api` base path. Exports TypeScript interfaces for all request/response shapes (`Board`, `List`, `Card`, `BoardDetailResponse`, and request types like `CreateListRequest`, `MoveCardRequest`, etc.). Error handling parses the backend's `{ detail: string }` error format into thrown `Error` instances.
+- **Board store:** `frontend/src/lib/board-store.ts` — TanStack React Query hooks for data fetching and mutations. All board data is cached under a single `["board"]` query key matching the backend's single-board paradigm.
+
+#### Available hooks
+
+| Hook | Purpose |
+|---|---|
+| `useBoard()` | Query hook — fetches full board via `GET /api/board`, exposes `data`, `isLoading`, `error` |
+| `useUpdateBoard()` | Mutation — updates board title |
+| `useCreateList()` | Mutation — creates a new list |
+| `useUpdateList()` | Mutation — updates a list's title |
+| `useDeleteList()` | Mutation — deletes a list |
+| `useReorderLists()` | Mutation — reorders lists by ID array |
+| `useCreateCard()` | Mutation — creates a new card |
+| `useUpdateCard()` | Mutation — updates a card's title |
+| `useDeleteCard()` | Mutation — deletes a card |
+| `useMoveCard()` | Mutation — moves a card to a different list/position |
+
+#### Adding a new mutation hook
+
+Follow the pattern in `frontend/src/lib/board-store.ts`:
+
+1. Define the `mutationFn` calling the corresponding function from `api.ts`
+2. Implement `onMutate`: cancel in-flight queries, snapshot the cache, apply the optimistic change
+3. Implement `onError`: roll back to the snapshot
+4. Implement `onSettled`: invalidate the `boardQueryKey` to refetch server state
+
+See `docs/architecture/adr-002-tanstack-query-state-management.md` for the architectural rationale.
+
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
 - **`db` fixture:** Provides an in-memory `Database` instance with schema initialized and the default board seeded. Function-scoped for test isolation. Use this fixture in API endpoint tests rather than creating ad-hoc database setup.
