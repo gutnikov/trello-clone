@@ -68,7 +68,7 @@ The `lists.py` router (`backend/src/app/routers/lists.py`) establishes the canon
 4. **Structured logging** — Use `from app.logging import get_logger` with a `module` parameter (e.g., `get_logger(module="routers.lists")`). Log one event per endpoint action (e.g., `list_created`, `list_updated`, `list_deleted`).
 5. **Return types** — Return `dict[str, Any]` (via `model.model_dump()`) for single-entity responses, `list[dict[str, Any]]` for collections. Use `Response(status_code=204)` for delete endpoints.
 6. **Error handling** — Raise `HTTPException(status_code=404, detail="<Entity> not found")` when a requested resource does not exist.
-7. **Router registration** — Import the router in `backend/src/app/main.py` and register it with `app.include_router(router, prefix="/api")`. See `main.py:54` for the lists router registration.
+7. **Router registration** — Import the router in `backend/src/app/main.py` and register it with `app.include_router(router, prefix="/api")`. See `main.py:57` for the lists router registration.
 
 ### API Router Pattern
 The canonical pattern for implementing API routers is established in `backend/src/app/routers/boards.py`. Follow this pattern for new routers:
@@ -78,7 +78,7 @@ The canonical pattern for implementing API routers is established in `backend/sr
 - **Router declaration:** Use `APIRouter(tags=["..."])` with no prefix on the router itself. The prefix (`/api`) is set at registration in `main.py` via `app.include_router(router, prefix="/api")`.
 - **Response models:** Set `response_model=` on each route decorator for automatic response validation and OpenAPI docs.
 - **Logging:** Include structlog logging in each handler for observability (e.g., `log.info("board_updated", board_id=board.id)`).
-- **Registration:** Import the router in `main.py` and register with `app.include_router(router, prefix="/api")`. See `backend/src/app/main.py:54` for the existing registration pattern.
+- **Registration:** Import the router in `main.py` and register with `app.include_router(router, prefix="/api")`. See `backend/src/app/main.py:55` for the existing registration pattern.
 
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
