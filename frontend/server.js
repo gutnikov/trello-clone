@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer, request as httpRequest } from "node:http";
 import { Readable } from "node:stream";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,6 +9,7 @@ const { default: handler } = await import("./dist/server/server.js");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
+const API_URL = new URL(process.env.API_URL || "http://localhost:8000");
 
 // Serve static assets from dist/client before falling through to SSR.
 // Hashed filenames in /assets/ get immutable caching (1 year).
@@ -20,6 +21,37 @@ const serve = sirv(path.join(__dirname, "dist/client"), {
 });
 
 const server = createServer((req, res) => {
+  // Proxy /api/* requests to the backend service
+  if (req.url?.startsWith("/api")) {
+    const proxyReq = httpRequest(
+      {
+        hostname: API_URL.hostname,
+        port: API_URL.port || 80,
+        path: req.url,
+        method: req.method,
+        headers: {
+          ...req.headers,
+          host: API_URL.host,
+        },
+      },
+      (proxyRes) => {
+        res.writeHead(proxyRes.statusCode ?? 502, proxyRes.headers);
+        proxyRes.pipe(res);
+      },
+    );
+
+    proxyReq.on("error", (err) => {
+      console.error("API proxy error:", err);
+      if (!res.headersSent) {
+        res.writeHead(502, { "Content-Type": "text/plain" });
+      }
+      res.end("Bad Gateway");
+    });
+
+    req.pipe(proxyReq);
+    return;
+  }
+
   // Try static files first; fall through to SSR handler if no match
   serve(req, res, async () => {
     try {
