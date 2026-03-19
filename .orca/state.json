@@ -1,6 +1,6 @@
 {
   "issue": "TRE-31",
-  "agent": "planning",
+  "agent": "implementation",
   "step": "completed",
   "scope_score": 6,
   "decision": "ATOMIC",
@@ -18,7 +18,18 @@
     "backend/tests/test_database.py"
   ],
   "subsystems": ["data_models", "persistence"],
-  "feedback_completeness_score": 7,
+  "implementation": {
+    "steps_completed": ["step-1", "step-2", "step-3", "step-4", "step-5"],
+    "tests_passing": {
+      "test_models": 12,
+      "test_database": 23,
+      "test_smoke": 1,
+      "total": 36
+    },
+    "all_tests_green": true,
+    "lint_clean": true,
+    "format_clean": true
+  },
   "retry_count": 0,
   "status": "success"
 }
