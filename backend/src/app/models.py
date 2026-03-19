@@ -1,32 +1,46 @@
 """Data models for the Trello clone backend.
 
-Stub module — implementation pending (TRE-31).
-Models are importable but not yet implemented with correct behavior.
+Defines Board, List, and Card Pydantic models with validation and immutability.
 """
 
-from pydantic import BaseModel
+from __future__ import annotations
+
+import uuid
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+def _uuid4_str() -> str:
+    """Generate a UUID v4 string."""
+    return str(uuid.uuid4())
 
 
 class Board(BaseModel):
-    """Board model stub — fields and validation not yet implemented."""
+    """A Trello-style board containing lists."""
 
-    id: str = ""
-    title: str = ""
+    model_config = ConfigDict(frozen=True)
+
+    id: str = Field(default_factory=_uuid4_str)
+    title: str = Field(min_length=1)
 
 
 class List(BaseModel):
-    """List model stub — fields and validation not yet implemented."""
+    """A list within a board, containing cards. Ordered by position."""
 
-    id: str = ""
-    title: str = ""
-    board_id: str = ""
-    position: int = -1
+    model_config = ConfigDict(frozen=True)
+
+    id: str = Field(default_factory=_uuid4_str)
+    title: str = Field(min_length=1)
+    board_id: str
+    position: int = 0
 
 
 class Card(BaseModel):
-    """Card model stub — fields and validation not yet implemented."""
+    """A card within a list. Ordered by position."""
 
-    id: str = ""
-    title: str = ""
-    list_id: str = ""
-    position: int = -1
+    model_config = ConfigDict(frozen=True)
+
+    id: str = Field(default_factory=_uuid4_str)
+    title: str = Field(min_length=1)
+    list_id: str
+    position: int = 0
