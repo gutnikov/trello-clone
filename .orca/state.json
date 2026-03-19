@@ -1,26 +1,11 @@
 {
   "issue": "TRE-39",
-  "agent": "implementation",
-  "step": "completed",
-  "status": "pass",
+  "agent": "validation",
+  "step": "ci-polling",
+  "status": "in_progress",
   "branch": "TRE-39",
-  "attempt_count": 1,
-  "tests_passing": {
-    "total": 34,
-    "api_tests": 22,
-    "board_store_tests": 11,
-    "smoke_tests": 1
-  },
-  "files_modified": [
-    "frontend/package.json",
-    "frontend/pnpm-lock.yaml",
-    "frontend/src/lib/api.ts",
-    "frontend/src/lib/board-store.ts"
-  ],
-  "implementation_summary": {
-    "api_client": "Typed functions for all 10 backend endpoints with error handling",
-    "board_store": "React Query hooks (useQuery + useMutation) with optimistic updates for all operations",
-    "types": "Board, List, Card, BoardDetailResponse and request types matching backend schemas",
-    "dependency_added": "@tanstack/react-query@5.91.2"
-  }
+  "pr_url": "https://github.com/gutnikov/trello-clone/pull/9",
+  "pr_number": 9,
+  "push_completed": true,
+  "pr_created": true
 }
