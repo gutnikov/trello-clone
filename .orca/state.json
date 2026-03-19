@@ -3,7 +3,7 @@
   "agent": "implementation",
   "step": "complete",
   "status": "done",
-  "attempt": 1,
+  "attempt": 2,
   "tests_passing": {
     "board-components.test.tsx": 14,
     "smoke.test.ts": 1,
@@ -12,17 +12,14 @@
     "total": 48
   },
   "files_modified": [
-    "frontend/src/components/Board.tsx",
-    "frontend/src/components/BoardList.tsx",
-    "frontend/src/components/BoardCard.tsx",
-    "frontend/src/components/EmptyBoard.tsx",
-    "frontend/src/routes/board.tsx",
-    "frontend/src/routeTree.gen.ts",
-    "frontend/src/styles.css",
-    "frontend/vite.config.ts"
+    "frontend/e2e/board.spec.ts"
+  ],
+  "validation_fixes": [
+    "Added API-based test data seeding for E2E tests that check board-list and board-card elements",
+    "Tests now create lists/cards via POST /api/lists and POST /api/cards before navigating",
+    "Added try/finally cleanup to delete seeded data after each test"
   ],
   "commits": [
-    "608b9c9 TRE-40: implement Board, BoardList, BoardCard, and EmptyBoard components",
-    "1bb312c TRE-40: add /board route, route tree, board styles, and lint fixes"
+    "TRE-40: seed E2E tests with API data for list and card display assertions"
   ]
 }

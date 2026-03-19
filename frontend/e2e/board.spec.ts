@@ -4,7 +4,8 @@
  * These tests verify that the /board route is accessible and renders
  * board data correctly, including lists, cards, and empty state.
  *
- * All tests are expected to FAIL until the implementation is written.
+ * Tests that require lists/cards seed their own data via the API
+ * and clean up afterwards to maintain test isolation.
  */
 import { expect, test } from "@playwright/test";
 
@@ -28,25 +29,56 @@ test.describe("Board page", () => {
   });
 
   test("board page displays lists when board has lists", async ({ page }) => {
-    await page.goto("/board");
+    // Seed a list via the API so the board has data to display
+    const boardRes = await page.request.get("/api/board");
+    const board = await boardRes.json();
+    const listRes = await page.request.post("/api/lists", {
+      data: { title: "E2E Test List", board_id: board.id },
+    });
+    const list = await listRes.json();
 
-    // Wait for board data to load — look for any list column element
-    const listColumn = page.locator("[data-testid='board-list']");
-    await expect(
-      listColumn.first(),
-      "Board page should display at least one list when the board has lists",
-    ).toBeVisible({ timeout: 10000 });
+    try {
+      await page.goto("/board");
+
+      // Wait for board data to load — look for any list column element
+      const listColumn = page.locator("[data-testid='board-list']");
+      await expect(
+        listColumn.first(),
+        "Board page should display at least one list when the board has lists",
+      ).toBeVisible({ timeout: 10000 });
+    } finally {
+      // Clean up: delete the test list
+      await page.request.delete(`/api/lists/${list.id}`);
+    }
   });
 
   test("board page displays cards within lists", async ({ page }) => {
-    await page.goto("/board");
+    // Seed a list and card via the API so the board has data to display
+    const boardRes = await page.request.get("/api/board");
+    const board = await boardRes.json();
+    const listRes = await page.request.post("/api/lists", {
+      data: { title: "E2E Test List for Cards", board_id: board.id },
+    });
+    const list = await listRes.json();
+    const cardRes = await page.request.post("/api/cards", {
+      data: { title: "E2E Test Card", list_id: list.id },
+    });
+    const card = await cardRes.json();
 
-    // Wait for board data to load — look for card elements inside lists
-    const card = page.locator("[data-testid='board-card']");
-    await expect(
-      card.first(),
-      "Board page should display cards within lists",
-    ).toBeVisible({ timeout: 10000 });
+    try {
+      await page.goto("/board");
+
+      // Wait for board data to load — look for card elements inside lists
+      const cardElement = page.locator("[data-testid='board-card']");
+      await expect(
+        cardElement.first(),
+        "Board page should display cards within lists",
+      ).toBeVisible({ timeout: 10000 });
+    } finally {
+      // Clean up: delete the test card and list
+      await page.request.delete(`/api/cards/${card.id}`);
+      await page.request.delete(`/api/lists/${list.id}`);
+    }
   });
 
   test("board page shows empty state when no lists exist", async ({ page }) => {
