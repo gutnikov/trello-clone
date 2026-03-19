@@ -1,57 +1,54 @@
-# Validation Report — TRE-35
+# Validation Report — TRE-37
 
 ## CI Result: FAIL
 
-**PR:** https://github.com/gutnikov/trello-clone/pull/5
-**Branch:** TRE-35
+**PR:** https://github.com/gutnikov/trello-clone/pull/6
+**Branch:** TRE-37
 **CI Workflow Runs:**
-- CI: https://github.com/gutnikov/trello-clone/actions/runs/23285069007
-- Deploy Staging: https://github.com/gutnikov/trello-clone/actions/runs/23285069003
+- CI: https://github.com/gutnikov/trello-clone/actions/runs/23286294838
+- Deploy Staging: https://github.com/gutnikov/trello-clone/actions/runs/23286294828
 
 ## Job Results
 
 | Job | Status | Duration |
 |-----|--------|----------|
 | Lint & Format | FAIL | 10s |
-| Test | PASS | 13s |
-| Deploy PR Preview | FAIL | 14s |
-| E2E Tests | SKIPPED | (depends on deploy) |
+| Test | PASS | 10s |
+| Deploy PR Preview | PASS | 22s |
+| E2E Tests | PASS | ~20s |
 
 ## Failure Details
 
 ### 1. Lint & Format — FAIL (blocking)
 
-**Step:** Run pre-commit
-**Error:** `ruff` hook found 1 auto-fixable lint error and modified files:
+**Step:** Type check (backend) — mypy
+**Error:** 5 mypy errors in `backend/src/app/routers/lists.py`:
 
 ```
-ruff (legacy alias)......................................................Failed
-- hook id: ruff
-- files were modified by this hook
-
-Found 1 error (1 fixed, 0 remaining).
+src/app/routers/lists.py:40: error: Missing type parameters for generic type "dict"  [type-arg]
+src/app/routers/lists.py:48: error: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+src/app/routers/lists.py:52: error: Missing type parameters for generic type "dict"  [type-arg]
+src/app/routers/lists.py:68: error: Missing type parameters for generic type "dict"  [type-arg]
+src/app/routers/lists.py:75: error: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+Found 5 errors in 1 file (checked 7 source files)
 ```
 
-**Root cause:** There is a ruff lint violation in the backend code that ruff can auto-fix. When pre-commit runs ruff with `--fix`, it modifies files, which causes the hook to fail (signaling the file was dirty).
+**Root cause:** The `lists.py` router uses bare `dict` return type annotations instead of parameterized `dict[str, Any]` (lines 40, 52, 68), and two functions return `Any` values without explicit casting (lines 48, 75).
 
-**Fix required:** Run `cd backend && uv run ruff check src/ tests/ --fix` locally, then commit the fixed files. Alternatively, run `cd backend && uv run pre-commit run --all-files` to identify and fix the exact file/issue.
+**Fix required:**
+1. Replace bare `dict` return annotations with `dict[str, Any]` on lines 40, 52, and 68
+2. Add explicit `dict(...)` conversion or type-narrowing cast for return values on lines 48 and 75
+3. Run `cd backend && uv run python -m mypy src/` locally to verify all errors are resolved
 
-### 2. Deploy PR Preview — FAIL (non-blocking for CI, but informational)
+### Other Checks — All PASS
 
-**Step:** Deploy preview stack
-**Error:** Backend container exited with code 3:
-
-```
-Container preview-pr-5-backend-1 Error dependency backend failed to start
-dependency failed to start: container preview-pr-5-backend-1 exited (3)
-```
-
-**Root cause:** The backend Docker container fails to start. This could be related to the lifespan changes (DB initialization at startup) or a missing dependency in the production Docker image (e.g., `aiosqlite` or `httpx` not in non-dev dependencies). The Dockerfile uses `uv sync --no-dev --no-install-project`, so only production dependencies are installed.
-
-**Fix required:** Check that all runtime dependencies (especially `aiosqlite`) are listed as non-dev dependencies in `backend/pyproject.toml`. Also verify the backend starts correctly with the new lifespan manager when no DB file path is configured.
+- **Pre-commit (ruff lint/format + biome):** PASS
+- **Backend tests (pytest):** PASS — all 53 tests pass including 6 new list endpoint tests
+- **Frontend tests (vitest):** PASS
+- **Deploy PR Preview:** PASS — staging stack healthy
+- **E2E Tests:** PASS
 
 ## Summary
 
-Two fixes needed before CI will pass:
-1. **Fix ruff lint violation** — run ruff check/fix and commit
-2. **Fix Docker startup** — ensure production dependencies are complete and lifespan works in containerized environment
+One fix needed before CI will pass:
+1. **Fix mypy type errors** in `backend/src/app/routers/lists.py` — add type parameters to bare `dict` annotations and handle `Any` return types

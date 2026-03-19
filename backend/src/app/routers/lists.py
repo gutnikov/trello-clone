@@ -1,5 +1,7 @@
 """List API endpoints: CRUD + reorder for lists on a board."""
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel
 
@@ -37,7 +39,7 @@ class ReorderListsRequest(BaseModel):
 
 
 @router.post("/lists", status_code=201)
-async def create_list(body: CreateListRequest, request: Request) -> dict:
+async def create_list(body: CreateListRequest, request: Request) -> dict[str, Any]:
     """Create a new list with auto-assigned position."""
     db = request.app.state.db
     existing_lists = await db.get_lists_by_board(body.board_id)
@@ -45,11 +47,12 @@ async def create_list(body: CreateListRequest, request: Request) -> dict:
     lst = List(title=body.title, board_id=body.board_id, position=position)
     created = await db.create_list(lst)
     log.info("list_created", list_id=created.id, board_id=body.board_id, position=position)
-    return created.model_dump()
+    result: dict[str, Any] = created.model_dump()
+    return result
 
 
 @router.put("/lists/reorder")
-async def reorder_lists(body: ReorderListsRequest, request: Request) -> list[dict]:
+async def reorder_lists(body: ReorderListsRequest, request: Request) -> list[dict[str, Any]]:
     """Reorder lists on a board by updating positions to match the submitted order."""
     db = request.app.state.db
     if not body.list_ids:
@@ -65,14 +68,15 @@ async def reorder_lists(body: ReorderListsRequest, request: Request) -> list[dic
 
 
 @router.put("/lists/{list_id}")
-async def update_list(list_id: str, body: UpdateListRequest, request: Request) -> dict:
+async def update_list(list_id: str, body: UpdateListRequest, request: Request) -> dict[str, Any]:
     """Update a list's title."""
     db = request.app.state.db
     updated = await db.update_list(list_id=list_id, title=body.title)
     if updated is None:
         raise HTTPException(status_code=404, detail="List not found")
     log.info("list_updated", list_id=list_id)
-    return updated.model_dump()
+    result: dict[str, Any] = updated.model_dump()
+    return result
 
 
 @router.delete("/lists/{list_id}", status_code=204)

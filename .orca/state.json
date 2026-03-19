@@ -26,6 +26,15 @@
     "new_tests_passed": 6,
     "existing_tests_unaffected": true
   },
-  "attempt_count": 1,
+  "validation": {
+    "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
+    "ci_run": "https://github.com/gutnikov/trello-clone/actions/runs/23286294838",
+    "result": "FAIL",
+    "failure_reason": "mypy type errors in backend/src/app/routers/lists.py (5 errors: bare dict types, Any returns)",
+    "passing_checks": ["pre-commit", "pytest", "vitest", "deploy-staging", "e2e"],
+    "failing_checks": ["mypy"],
+    "fix_applied": "Added typing.Any import, parameterized dict return types to dict[str, Any], added explicit type annotations on model_dump() returns"
+  },
+  "attempt_count": 2,
   "status": "done"
 }
