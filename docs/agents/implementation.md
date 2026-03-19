@@ -56,7 +56,29 @@
 ### App Configuration
 - **CORS:** Configured in `backend/src/app/main.py` via `CORSMiddleware`. Defaults to allow all origins (`*`) for dev. Set `CORS_ORIGINS` env var (comma-separated) for production.
 - **Lifespan:** The `lifespan` async context manager in `main.py` connects to the database, initializes the schema, seeds the default board on startup, and closes the DB on shutdown. The `Database` instance is available at `app.state.db`.
-- **Router package:** `backend/src/app/routers/__init__.py` is the router package. Add new endpoint modules (e.g., `boards.py`, `lists.py`, `cards.py`) here and include them in the app.
+- **Router package:** `backend/src/app/routers/__init__.py` is the router package. Add new endpoint modules (e.g., `boards.py`, `lists.py`) here and include them in the app.
+
+### Router Pattern (Canonical Example: `backend/src/app/routers/cards.py`)
+
+The cards router is the first router module in the project. Follow this pattern when adding new routers (boards, lists, etc.):
+
+**Module structure:**
+1. Define request body schemas as Pydantic `BaseModel` subclasses (separate from the frozen domain models in `models.py`). Use `Field(min_length=1)` for required string fields.
+2. Define a `_get_db(request: Request) -> Database` helper to retrieve the `Database` instance from `request.app.state.db`.
+3. Create the router with `router = APIRouter(tags=["<resource>"])`.
+4. Implement endpoint functions as `async def` with `request: Request` for DB access and Pydantic body parameters for input validation.
+5. Return `model.model_dump()` (as `dict[str, object]`) rather than the Pydantic model directly — this avoids mypy `type-arg` issues.
+
+**Registration in `main.py`:**
+```python
+from app.routers.cards import router as cards_router
+app.include_router(cards_router, prefix="/api")
+```
+
+**Key conventions:**
+- Use structured logging via `from app.logging import get_logger` with a `module` parameter (e.g., `get_logger(module="cards_router")`).
+- Return 201 for create, 204 (empty body) for delete, 200 for update. Raise `HTTPException(status_code=404)` for not-found cases.
+- For 204 responses, use `response_class=Response` in the decorator and return `Response(status_code=204)` explicitly.
 
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
