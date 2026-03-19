@@ -70,6 +70,16 @@ The `lists.py` router (`backend/src/app/routers/lists.py`) establishes the canon
 6. **Error handling** — Raise `HTTPException(status_code=404, detail="<Entity> not found")` when a requested resource does not exist.
 7. **Router registration** — Import the router in `backend/src/app/main.py` and register it with `app.include_router(router, prefix="/api")`. See `main.py:54` for the lists router registration.
 
+### API Router Pattern
+The canonical pattern for implementing API routers is established in `backend/src/app/routers/boards.py`. Follow this pattern for new routers:
+
+- **Database access:** Route handlers obtain the database via `db: Database = request.app.state.db` (from the `Request` object, not dependency injection).
+- **Response/request schemas:** Define Pydantic `BaseModel` subclasses in the same router file alongside the endpoints. Use `ConfigDict(frozen=True)` on all schemas. Use `Field(min_length=1)` or similar validators for request body validation.
+- **Router declaration:** Use `APIRouter(tags=["..."])` with no prefix on the router itself. The prefix (`/api`) is set at registration in `main.py` via `app.include_router(router, prefix="/api")`.
+- **Response models:** Set `response_model=` on each route decorator for automatic response validation and OpenAPI docs.
+- **Logging:** Include structlog logging in each handler for observability (e.g., `log.info("board_updated", board_id=board.id)`).
+- **Registration:** Import the router in `main.py` and register with `app.include_router(router, prefix="/api")`. See `backend/src/app/main.py:54` for the existing registration pattern.
+
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`
 - **`db` fixture:** Provides an in-memory `Database` instance with schema initialized and the default board seeded. Function-scoped for test isolation. Use this fixture in API endpoint tests rather than creating ad-hoc database setup.

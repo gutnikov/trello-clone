@@ -28,6 +28,13 @@ Set `CORS_ORIGINS` to your frontend domain in production (e.g., `https://app.exa
 |--------|------|-------------|
 | `GET` | `/health` | Health check — returns `{"status": "ok", "version": "0.1.0"}` |
 
+### Board
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/board` | Returns the board with all lists and cards in a nested JSON structure |
+| `PUT` | `/api/board` | Updates the board title — accepts `{"title": "..."}`, returns the updated board |
+
 ### Lists
 
 | Method | Path | Description |
