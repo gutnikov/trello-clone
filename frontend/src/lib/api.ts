@@ -72,7 +72,18 @@ interface ApiErrorResponse {
   detail: string;
 }
 
-const API_BASE = "/api";
+function getApiBase(): string {
+  if (typeof window === "undefined") {
+    // Server-side (SSR): use the backend URL directly
+    // eslint-disable-next-line no-process-env
+    const backendUrl = process.env.API_URL || "http://localhost:8000";
+    return `${backendUrl}/api`;
+  }
+  // Client-side: use relative URL (goes through the server proxy)
+  return "/api";
+}
+
+const API_BASE = getApiBase();
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
