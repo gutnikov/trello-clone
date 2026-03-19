@@ -8,56 +8,13 @@ Verifies that the shared `db` and `client` fixtures in conftest.py:
 
 These tests correspond to the feedback loop plan in docs/feedback-loops/TRE-35-feedback.md.
 
-NOTE (fail-first scaffolding):
-These tests are written BEFORE conftest.py exists. They include minimal inline
-fixtures that intentionally lack seeding / app-wiring behavior. When the proper
-conftest.py fixtures are created by the implementation agent, pytest's scope
-resolution will use the conftest.py fixtures (which seed the board and wire the
-app), and these tests will pass.
+Fixtures are provided by conftest.py (db and client).
 """
 
 import httpx
-import pytest
-from httpx import ASGITransport
 
 from app.database import Database
 from app.main import app
-
-
-# ---------------------------------------------------------------------------
-# Inline fallback fixtures — intentionally incomplete
-# These will be overridden by conftest.py once it is implemented.
-# ---------------------------------------------------------------------------
-
-
-@pytest.fixture
-async def db() -> Database:  # type: ignore[misc]
-    """Minimal DB fixture: connects and inits schema, but does NOT seed.
-
-    The proper conftest.py fixture should seed the default board.
-    Tests that assert a seeded board will fail until conftest.py exists.
-    """
-    database = Database(":memory:")
-    await database.connect()
-    await database.init_schema()
-    # NOTE: intentionally NOT calling await database.seed_default_board()
-    yield database  # type: ignore[misc]
-    await database.close()
-
-
-@pytest.fixture
-async def client(db: Database) -> httpx.AsyncClient:  # type: ignore[misc]
-    """Minimal client fixture: creates a test client but does NOT wire app.state.db.
-
-    The proper conftest.py fixture should set app.state.db = db before
-    creating the client.  Tests that assert app.state.db is the test DB
-    will fail until conftest.py exists.
-    """
-    # NOTE: intentionally NOT setting app.state.db = db
-    transport = ASGITransport(app=app)  # type: ignore[arg-type]
-    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
-        yield c  # type: ignore[misc]
-
 
 # ===========================================================================
 # 3. Shared Fixture Tests
