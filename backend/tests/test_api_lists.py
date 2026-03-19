@@ -13,7 +13,6 @@ Uses shared ``db`` and ``client`` fixtures from conftest.py.
 """
 
 import httpx
-import pytest
 
 from app.database import Database
 from app.models import Card, List
