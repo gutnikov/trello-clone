@@ -56,29 +56,20 @@
 ### App Configuration
 - **CORS:** Configured in `backend/src/app/main.py` via `CORSMiddleware`. Defaults to allow all origins (`*`) for dev. Set `CORS_ORIGINS` env var (comma-separated) for production.
 - **Lifespan:** The `lifespan` async context manager in `main.py` connects to the database, initializes the schema, seeds the default board on startup, and closes the DB on shutdown. The `Database` instance is available at `app.state.db`.
-- **Router package:** `backend/src/app/routers/__init__.py` is the router package. Add new endpoint modules (e.g., `boards.py`, `lists.py`) here and include them in the app.
+- **Router package:** `backend/src/app/routers/__init__.py` is the router package. Router modules: `boards.py`, `lists.py`, `cards.py`. Register them in `main.py`.
 
-### Router Pattern (Canonical Example: `backend/src/app/routers/cards.py`)
+### Router Implementation Pattern
 
-The cards router is the first router module in the project. Follow this pattern when adding new routers (boards, lists, etc.):
+All three routers (`boards.py`, `lists.py`, `cards.py`) follow the same canonical pattern:
 
-**Module structure:**
-1. Define request body schemas as Pydantic `BaseModel` subclasses (separate from the frozen domain models in `models.py`). Use `Field(min_length=1)` for required string fields.
-2. Define a `_get_db(request: Request) -> Database` helper to retrieve the `Database` instance from `request.app.state.db`.
-3. Create the router with `router = APIRouter(tags=["<resource>"])`.
-4. Implement endpoint functions as `async def` with `request: Request` for DB access and Pydantic body parameters for input validation.
-5. Return `model.model_dump()` (as `dict[str, object]`) rather than the Pydantic model directly — this avoids mypy `type-arg` issues.
-
-**Registration in `main.py`:**
-```python
-from app.routers.cards import router as cards_router
-app.include_router(cards_router, prefix="/api")
-```
-
-**Key conventions:**
-- Use structured logging via `from app.logging import get_logger` with a `module` parameter (e.g., `get_logger(module="cards_router")`).
-- Return 201 for create, 204 (empty body) for delete, 200 for update. Raise `HTTPException(status_code=404)` for not-found cases.
-- For 204 responses, use `response_class=Response` in the decorator and return `Response(status_code=204)` explicitly.
+1. **Pydantic request models** — Define request body schemas (e.g., `CreateCardRequest`, `UpdateCardRequest`) as `BaseModel` subclasses directly in the router file. Use `Field(min_length=1)` for required string fields.
+2. **Database access** — Access the database via `request.app.state.db` (the `Database` instance injected during app lifespan). The cards router uses a `_get_db(request: Request) -> Database` helper for typed access.
+3. **Route ordering** — Define static path routes (e.g., `PUT /lists/reorder`) **before** parameterized path routes (e.g., `PUT /lists/{list_id}`). FastAPI matches routes in definition order.
+4. **Structured logging** — Use `from app.logging import get_logger` with a `module` parameter (e.g., `get_logger(module="cards_router")`). Log one event per endpoint action.
+5. **Return types** — Return `dict[str, object]` or `dict[str, Any]` (via `model.model_dump()`) for single-entity responses. Use `Response(status_code=204)` for delete endpoints.
+6. **Error handling** — Raise `HTTPException(status_code=404, detail="<Entity> not found")` when a requested resource does not exist.
+7. **Status codes** — Return 201 for create, 204 (empty body) for delete, 200 for update. For 204, use `response_class=Response` in the decorator.
+8. **Router registration** — Import the router in `backend/src/app/main.py` and register with `app.include_router(router, prefix="/api")`.
 
 ### Shared Test Fixtures
 - **Location:** `backend/tests/conftest.py`

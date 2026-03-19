@@ -10,7 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Database
 from app.logging import get_logger, setup_logging
+from app.routers.boards import router as boards_router
 from app.routers.cards import router as cards_router
+from app.routers.lists import router as lists_router
 
 setup_logging()
 log = get_logger()
@@ -51,7 +53,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+app.include_router(boards_router, prefix="/api")
+app.include_router(lists_router, prefix="/api")
 app.include_router(cards_router, prefix="/api")
 
 

@@ -220,3 +220,5 @@ node_modules/
 # Skills: ignore temp/runtime files
 .claude/skills/playwright-skill/.temp-execution-*
 .claude/skills/playwright-skill/node_modules/
+
+.orca
