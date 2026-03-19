@@ -44,3 +44,11 @@
 - Config: `backend/src/app/logging.py`
 - Import: `from app.logging import get_logger, setup_logging`
 - Format: JSON to stdout
+
+### Database
+- **Engine:** SQLite via `aiosqlite`
+- **Module:** `backend/src/app/database.py` — `Database` class with async lifecycle
+- **Models:** `backend/src/app/models.py` — frozen Pydantic `BaseModel` subclasses (no ORM)
+- **Pattern:** The `Database` class owns the connection and provides async CRUD methods. Call `connect()` → `init_schema()` → `seed_default_board()` on startup; `close()` on shutdown.
+- **Adding entities:** Define a Pydantic model in `models.py`, add `CREATE TABLE` SQL to `init_schema()`, then add CRUD methods to `Database` following the existing Board/List/Card pattern.
+- **ADR:** See `docs/architecture/adr-001-sqlite-persistence.md` for rationale.
