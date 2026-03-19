@@ -17,6 +17,7 @@ const config = defineConfig({
   ],
   test: {
     exclude: ['e2e/**', 'node_modules/**'],
+    globals: true,
   },
 })
 
