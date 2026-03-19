@@ -1,35 +1,25 @@
 {
   "issue": "TRE-31",
-  "agent": "implementation",
-  "step": "completed",
-  "scope_score": 6,
-  "decision": "ATOMIC",
-  "artifacts": {
-    "scope_report": "docs/plans/TRE-31-scope.md",
-    "implementation_plan": "docs/plans/TRE-31-plan.md",
-    "feedback_loop": "docs/feedback-loops/TRE-31-feedback.md",
-    "doc_impact": "docs/plans/TRE-31-doc-impact.md"
-  },
-  "affected_files": [
-    "backend/src/app/models.py",
-    "backend/src/app/database.py",
-    "backend/pyproject.toml",
-    "backend/tests/test_models.py",
-    "backend/tests/test_database.py"
-  ],
-  "subsystems": ["data_models", "persistence"],
-  "implementation": {
-    "steps_completed": ["step-1", "step-2", "step-3", "step-4", "step-5"],
-    "tests_passing": {
-      "test_models": 12,
-      "test_database": 23,
-      "test_smoke": 1,
-      "total": 36
-    },
-    "all_tests_green": true,
-    "lint_clean": true,
-    "format_clean": true
+  "agent": "docs",
+  "step": "updating-docs",
+  "pr_url": "https://github.com/gutnikov/trello-clone/pull/4",
+  "pr_number": 4,
+  "branch": "TRE-31",
+  "push_completed": true,
+  "pr_created": true,
+  "ci_status": "pass",
+  "ci_checks": {
+    "Test": "SUCCESS",
+    "Lint & Format": "SUCCESS",
+    "Deploy PR Preview": "SUCCESS",
+    "E2E Tests": "SUCCESS"
   },
   "retry_count": 0,
-  "status": "success"
+  "doc_updates_completed": [
+    "docs/architecture/adr-001-sqlite-persistence.md",
+    "docs/agents/implementation.md",
+    "README.md"
+  ],
+  "doc_updates_pending": [],
+  "status": "in_progress"
 }
