@@ -26,31 +26,30 @@
     "new_tests_passed": 6,
     "existing_tests_unaffected": true
   },
-  "validation": {
-    "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
-    "ci_runs": [
-      "https://github.com/gutnikov/trello-clone/actions/runs/23286294838",
-      "https://github.com/gutnikov/trello-clone/actions/runs/23286549056"
-    ],
+  "ci_results": {
     "result": "PASS",
-    "all_checks_pass": true,
-    "checks": {
+    "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
+    "ci_run": "https://github.com/gutnikov/trello-clone/actions/runs/23286745292",
+    "deploy_run": "https://github.com/gutnikov/trello-clone/actions/runs/23286745287",
+    "jobs": {
       "lint_format": "PASS",
       "test": "PASS",
-      "deploy_staging": "PASS",
+      "deploy_preview": "PASS",
       "e2e": "PASS"
     }
   },
-  "docs": {
+  "docs_validation": {
+    "result": "PASS",
+    "checklist_items_addressed": 3,
+    "checklist_items_total": 3,
+    "internal_links_valid": true,
+    "code_references_valid": true,
+    "no_todo_fixme": true,
     "updated_files": [
       "docs/agents/implementation.md",
       "docs/agents/design-feedback-loop.md",
       "README.md"
-    ],
-    "checklist_items_addressed": 3,
-    "checklist_items_total": 3,
-    "validation": "PASS",
-    "pr_description_updated": true
+    ]
   },
   "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
   "attempt_count": 2,
