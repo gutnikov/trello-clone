@@ -49,8 +49,10 @@
     ],
     "checklist_items_addressed": 3,
     "checklist_items_total": 3,
-    "validation": "PASS"
+    "validation": "PASS",
+    "pr_description_updated": true
   },
+  "pr_url": "https://github.com/gutnikov/trello-clone/pull/6",
   "attempt_count": 2,
   "status": "done"
 }
